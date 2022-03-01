@@ -41,7 +41,7 @@ void person::output() {
 void person::edit_profile() {
 
 }
-class student
+class student : public person
 {
 public:
 	void class_list(fstream class_list);
@@ -54,6 +54,7 @@ private:
 	void view_results(fstream result_list); // b/c 1 student only see his/her results other can't
 };
 void student::class_list(fstream class_list) {
+    
 	//view class list by output to the screen the info in the "class_list.txt"
 }
 void student::register_course(fstream course_list, fstream& course_registered) {
@@ -71,5 +72,6 @@ void student::view_results(fstream result_list) {
 	//result list is the list that academic staff or teacher will bring   
 }
 int main() {
-
+    
+    return 0;
 }
