@@ -1,6 +1,86 @@
 #include <iostream>
+#include <windows.h>
+#include <conio.h>
 #include <fstream>
+#include <string>
+#include <string.h>
+#include <atlstr.h>
+#include <direct.h>
+#include <cassert>
+
 using namespace std;
+bool FolderExists(const CString& strFolderName)
+{
+	return GetFileAttributes(strFolderName) != INVALID_FILE_ATTRIBUTES;
+}
+void textcolor(int x)
+{
+	HANDLE mau;
+	mau = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(mau, x);
+}
+void gotoxy(int x, int y)
+{
+	HANDLE hConsoleOuput;
+	COORD Cursor_an_Pos = { x ,y };
+	hConsoleOuput = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(hConsoleOuput, Cursor_an_Pos);
+}
+void Setcolor(int backgound_color, int text_color)
+{
+	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+	int color_code = backgound_color * 16 + text_color;
+	SetConsoleTextAttribute(hStdout, color_code);
+}
+BOOL WINAPI SetConsoleTitle(
+	_In_ LPCTSTR lpConsoleTitle
+);
+void ShowCur(bool CursorVisibility)
+{
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO ConCurInf;
+
+	ConCurInf.dwSize = 10;
+	ConCurInf.bVisible = CursorVisibility;
+
+	SetConsoleCursorInfo(handle, &ConCurInf);
+}
+void resizeConsole(int width, int height)
+{
+	HWND console = GetConsoleWindow();
+	RECT r;
+	GetWindowRect(console, &r);
+	MoveWindow(console, r.left, r.top, width, height, TRUE);
+}
+struct teacher
+{
+	string theory;
+	string practice;
+};
+struct schedule
+{
+	string theory;
+	string practice;
+};
+struct semester
+{
+	string name;
+	string start;
+	string end;
+};
+class Course
+{
+public:
+	string semester;
+	string Course_Code;
+	string Course_Name;
+	int credits;
+	string Class;
+	schedule Schedule;
+
+private:
+	teacher Teacher;
+};
 class person
 {
 protected:
@@ -374,7 +454,727 @@ public:
 	void adjust_StudentGrades();
 	void read_ClassGrades();
 };
-bool login2(int x, int y, int h, int w, bool check, string& path)
+// lien quan den nam
+
+struct yearcreated {
+	string year;
+	yearcreated* pnext;
+	yearcreated* ppre;
+};
+struct list
+{
+	yearcreated* head = NULL;
+	yearcreated* tail = NULL;
+};
+yearcreated* makenodecreateyear(string year)
+{
+	yearcreated* p = new yearcreated;
+	p->year = year;
+	p->pnext = NULL;
+	p->ppre = NULL;
+	return p;
+}
+int cutyear(string year)
+{
+	for (int i = 0; i < year.length(); i++)
+	{
+		if (year[i] == '-')
+		{
+			return atol(year.substr(0, i).c_str());
+		}
+	}
+}
+void deletetail(list& listyear)
+{
+	yearcreated* temp = listyear.tail;
+	listyear.tail = listyear.tail->ppre;
+	listyear.tail->pnext = NULL;
+	delete temp;
+}
+void push1createdyear_tail(list &listyear, string year)
+{
+	yearcreated *p = makenodecreateyear(year);
+	if (listyear.head == NULL)
+	{
+		listyear.head = p;
+		listyear.tail = p;
+	}
+	else
+	{
+		listyear.tail->pnext = p;
+		p->ppre = listyear.tail;
+		listyear.tail = p;
+	}
+}
+void push1createdyear_head(list& listyear, string year)
+{
+	yearcreated* p = makenodecreateyear(year);
+	if (listyear.head == NULL)
+	{
+		listyear.head = p;
+		listyear.tail = p;
+	}
+	else
+	{
+		p->pnext = listyear.head;
+		listyear.head->ppre = p;
+		listyear.head = p;
+	}
+}
+void pusharrangecreatedyear(list& listyear, string year)
+{
+	if (listyear.head == NULL)
+	{
+		push1createdyear_head(listyear, year);
+	}
+	else if (cutyear(listyear.head->year) > cutyear(year))
+	{
+		push1createdyear_head(listyear, year);
+	}
+	else
+	{
+		yearcreated* p = makenodecreateyear(year);
+		yearcreated* p1 = listyear.head;
+		yearcreated* p2 = listyear.head->pnext;
+		while (p2 != NULL && p2->year < year)
+		{
+			p1 = p1->pnext;
+			p2 = p2->pnext;
+		}
+		p1->pnext = p;
+		p->ppre = p1;
+		p->pnext = p2;
+		if (p2 != NULL)
+		{
+			p2->ppre = p;
+		}
+		else
+		{
+			listyear.tail = p;
+		}
+	}
+
+}
+void outputcreatedyear_file(list& listyear)
+{
+	ofstream fileout;
+	fileout.open("schoolyear.txt", ios::out);
+	for (yearcreated* i = listyear.head; i != NULL; i=i->pnext)
+	{
+		if (i == listyear.tail)
+		{
+			fileout << i->year;
+		}
+		else
+		{
+			fileout << i->year << endl;
+		}
+	}
+	fileout.close();
+}
+void pushallcreatedyear_file(list &listyear)
+{
+	ifstream filein;
+	filein.open("schoolyear.txt", ios::in);
+	string temp;
+	while (!filein.eof())
+	{
+		filein >> temp;
+		push1createdyear_tail(listyear, temp);
+	}
+	//deletetail(listyear);
+	filein.close();
+}
+void deletelistcreatedyear(list& listyear)
+{
+	yearcreated* temp;
+	while (listyear.head != NULL)
+	{
+		temp = listyear.head;
+		listyear.head = listyear.head->pnext;
+		if (listyear.head != NULL)
+		{
+			listyear.head->ppre = NULL;
+		}
+		delete temp;
+	}
+}
+void outputlist(list& listyear)
+{
+	for (yearcreated* i = listyear.head; i != NULL; i=i->pnext)
+	{
+		cout << i->year << " ";
+	}
+}
+// Cac ham lien quan den giao dien chinh
+bool Login(int, int, int, int, bool, string& );
+void Create_Board(int x, int y, int h, int w)
+{
+	for (int i = x; i < x + w; i++)
+	{
+		gotoxy(i, y); cout << "=";
+		gotoxy(i, y + h + 1); cout << "=";
+	}
+	for (int i = y + 1; i <= y + h; i++)
+	{
+		gotoxy(x, i); cout << char(124);
+		gotoxy(x + w - 1, i); cout << char(124);
+	}
+	gotoxy(0, y + h + 2);
+}
+void Create_n_Board_Col(int n, int x, int y, int h, int w)
+{
+	for (int i = 0; i < n; i++)
+	{
+		Create_Board(x, y + (h + 1)*i, h, w);
+	}
+}
+void Create_n_Board_Row(int n, int x, int y, int h, int w)
+{
+	for (int i = 0; i < n; i++)
+	{
+		Create_Board(x+w*i+1*i, y, h, w);
+	}
+}
+void Create_Board_Content(int x, int y, int h, int w, string content, int ythanhsang)
+{
+	for (int i = x; i < x + w; i++)
+	{
+		gotoxy(i, y); cout << "=";
+		gotoxy(i, y + h + 1); cout << "=";
+	}
+	if (y+1 == ythanhsang)
+	{
+		Setcolor(7, 0); gotoxy(x + 16, y + 1); cout << content; Setcolor(0, 7);
+	}
+	else
+	{
+		gotoxy(x + 16, y + 1); cout << content;
+	}
+	for (int i = y + 1; i <= y + h; i++)
+	{
+		gotoxy(x, i); cout << char(124);
+		gotoxy(x + w - 1, i); cout << char(124);
+	}
+	gotoxy(0, y + h + 2);
+}
+void Menu_SinhVien(int x, int y, int h, int w, int ythanhsang)
+{
+	Create_Board_Content(x, y, h, w, "YOUR INFORMATION",ythanhsang);
+	Create_Board_Content(x, y+h+1, h, w, "CHANGE PASSWORD",ythanhsang);
+	Create_Board_Content(x, y+2*(h+1), h, w, "REGIST COURSE",ythanhsang);
+	Create_Board_Content(x, y + 3 * (h + 1), h, w, "SCORE COURSE",ythanhsang);
+	Create_Board_Content(x, y + 4 * (h + 1), h, w, "LOG OUT",ythanhsang);
+}
+void Menu_GiaoVu(int x, int y, int h, int w, int ythanhsang)
+{
+	Create_Board_Content(x, y, h, w, "YOUR INFORMATION",ythanhsang);
+	Create_Board_Content(x, y + h + 1, h, w, "CHANGE PASSWORD",ythanhsang);
+	Create_Board_Content(x, y+2*(h+1), h, w, "CREATE SCHOOLYEAR", ythanhsang);
+	Create_Board_Content(x, y + 3*(h + 1), h, w, "CREATE CLASS", ythanhsang);
+	Create_Board_Content(x, y + 4 * (h + 1), h, w, "CREATE SEMESTER", ythanhsang);
+	Create_Board_Content(x, y + 5 * (h + 1), h, w, "CREATE COURSE",ythanhsang);
+	Create_Board_Content(x, y + 6 * (h + 1), h, w, "ADD STUDENT", ythanhsang);
+	Create_Board_Content(x, y + 7 * (h + 1), h, w, "LOG OUT",ythanhsang);
+}
+bool GiaoDienDoiMatKhau_SinhVien(int x, int y, int h, int w, student &student1)
+{
+	ShowCur(1);
+	Setcolor(1, 0);
+	string d;
+	for (int i = y; i <= y + h + 1; i++)
+	{
+		for (int j = x; j < x + w; j++)
+		{
+			gotoxy(j, i); cout << " ";
+		}
+	}
+	Setcolor(0, 7);
+	Setcolor(11, 0);
+	gotoxy(x, y); cout << "                 Change password                  ";
+	Setcolor(0, 7);
+	gotoxy(x + 1, y + 3); cout << "Current password:";
+	gotoxy(x + 1, y + 7); cout << "New password (max 25char):";
+	gotoxy(x + 1, y + 11); cout << "New password again:";
+	Setcolor(7, 0);
+	gotoxy(x + 8, y + 14); cout << "AFTER ENTER TO SAVE CHANGE PLEASE LOG OUT";
+	gotoxy(x + 12, y + 15); cout << "ENTER TO SAVE CHANGE";
+	for (int i = x + 1; i < x + w - 1; i++)
+	{
+		gotoxy(i, y + 4); cout << " ";
+		gotoxy(i, y + 8); cout << " ";
+		gotoxy(i, y + 12); cout << " ";
+	}
+	char currentpassword[100]; int j = 0;
+	gotoxy(x + 1, y + 4);
+	while (true)
+	{
+		char temp = _getch();
+		if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && j <= 25)
+		{
+			currentpassword[j] = temp;
+			++j;
+			cout << currentpassword[j - 1];
+		}
+		if (temp == '\b' && j >= 1)
+		{
+			cout << "\b \b";
+			--j;
+		}
+		if (temp == '\r')
+		{
+			if (j > 0)
+			{
+				currentpassword[j] = '\0';
+				d = currentpassword;
+				if (d == student1.getpassword())
+				{
+					Setcolor(1, 0);
+					gotoxy(x + 1, y + 2); cout << "                ";
+					gotoxy(x + 1, y + 5); cout << "                          ";
+					Setcolor(7, 0);
+					break;
+				}
+				else
+				{
+					gotoxy(x + 1, y + 2); cout << "Wrong password !"; gotoxy(x + j + 1, y + 4);
+				}
+			}
+			else
+			{
+				Setcolor(0, 4);
+				gotoxy(x + 1, y + 5); cout << "You didn't type anything !";
+				gotoxy(x + 1, y + 4);
+				Setcolor(7, 0);
+			}
+		}
+		if (temp == 27)
+		{
+			Setcolor(0, 7);
+			return false;
+		}
+	}
+	char newpassword[100]; int i = 0;
+	gotoxy(x + 1, y + 8);
+	while (true)
+	{
+		char temp = _getch();
+		if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && i <= 25)
+		{
+			newpassword[i] = temp;
+			++i;
+			cout << newpassword[i - 1];
+		}
+		if (temp == '\b' && i >= 1)
+		{
+			cout << "\b \b";
+			--i;
+		}
+		if (temp == '\r')
+		{
+			if (i > 0)
+			{
+				newpassword[i] = '\0';
+				d = newpassword;
+				Setcolor(1, 0);
+				gotoxy(x + 1, y + 9); cout << "                          ";
+				Setcolor(7, 0);
+				break;
+			}
+			else
+			{
+				Setcolor(0, 4);
+				gotoxy(x + 1, y + 9); cout << "You didn't type anything !";
+				gotoxy(x + 1, y + 8);
+				Setcolor(7, 0);
+			}
+		}
+		if (temp == 27)
+		{
+			Setcolor(0, 7);
+			return false;
+		}
+	}
+	char checkpassword[100]; int k = 0;
+	gotoxy(x + 1, y + 12);
+	while (true)
+	{
+		char temp = _getch();
+		if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && k <= 25)
+		{
+			checkpassword[k] = temp;
+			++k;
+			cout << checkpassword[k - 1];
+		}
+		if (temp == '\b' && k >= 1)
+		{
+			cout << "\b \b";
+			--k;
+		}
+		if (temp == '\r')
+		{
+			if (k > 0)
+			{
+				checkpassword[k] = '\0';
+				string temp = checkpassword;
+				if (temp == d)
+				{
+					student1.changepassword(d);
+					break;
+				}
+				else
+				{
+					gotoxy(x + 1, y + 10); cout << "Wrong password !"; gotoxy(x + k + 1, y + 12);
+				}
+			}
+			else
+			{
+				Setcolor(0, 4);
+				gotoxy(x + 1, y + 13); cout << "You didn't type anything !";
+				gotoxy(x + 1, y + 12);
+				Setcolor(7, 0);
+			}
+		}
+		if (temp == 27)
+		{
+			Setcolor(0, 7);
+			return false;
+		}
+	}
+	Setcolor(0, 7);
+	gotoxy(0, y + h + 2);
+	return true;
+}
+bool GiaoDienDoiMatKhau_GiaoVu(int x, int y, int h, int w, staff& staff1)
+{
+	ShowCur(1);
+	Setcolor(1, 0);
+	string d;
+	for (int i = y; i <= y + h + 1; i++)
+	{
+		for (int j = x; j < x + w; j++)
+		{
+			gotoxy(j, i); cout << " ";
+		}
+	}
+	Setcolor(0, 7);
+	Setcolor(11, 0);
+	gotoxy(x, y); cout << "                 Change password                  ";
+	Setcolor(0, 7);
+	gotoxy(x + 1, y + 3); cout << "Current password:";
+	gotoxy(x + 1, y + 7); cout << "New password (max 25char):";
+	gotoxy(x + 1, y + 11); cout << "New password again:";
+	Setcolor(7, 0);
+	gotoxy(x + 8, y + 14); cout << "AFTER ENTER TO SAVE CHANGE PLEASE LOG OUT";
+	gotoxy(x + 12, y + 15); cout << "ENTER to save change";
+	for (int i = x + 1; i < x + w - 1; i++)
+	{
+		gotoxy(i, y + 4); cout << " ";
+		gotoxy(i, y + 8); cout << " ";
+		gotoxy(i, y + 12); cout << " ";
+	}
+	char currentpassword[100]; int j = 0;
+	gotoxy(x + 1, y + 4);
+	while (true)
+	{
+		char temp = _getch();
+		if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && j <= 25)
+		{
+			currentpassword[j] = temp;
+			++j;
+			cout << currentpassword[j - 1];
+		}
+		if (temp == '\b' && j >= 1)
+		{
+			cout << "\b \b";
+			--j;
+		}
+		if (temp == '\r')
+		{
+			if (j > 0)
+			{
+				currentpassword[j] = '\0';
+				d = currentpassword;
+				if (d == staff1.getpassword())
+				{
+					Setcolor(1, 0);
+					gotoxy(x + 1, y + 2); cout << "                ";
+					gotoxy(x + 1, y + 5); cout << "                          ";
+					Setcolor(7, 0);
+					break;
+				}
+				else
+				{
+					gotoxy(x + 1, y + 2); cout << "Wrong password !"; gotoxy(x + j + 1, y + 4);
+				}
+			}
+			else
+			{
+				Setcolor(0, 4);
+				gotoxy(x + 1, y + 5); cout << "You didn't type anything !";
+				gotoxy(x + 1, y + 4);
+				Setcolor(7, 0);
+			}
+		}
+		if (temp == 27)
+		{
+			Setcolor(0, 7);
+			return false;
+		}
+	}
+	char newpassword[100]; int i = 0;
+	gotoxy(x + 1, y + 8);
+	while (true)
+	{
+		char temp = _getch();
+		if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && i <= 25)
+		{
+			newpassword[i] = temp;
+			++i;
+			cout << newpassword[i - 1];
+		}
+		if (temp == '\b' && i >= 1)
+		{
+			cout << "\b \b";
+			--i;
+		}
+		if (temp == '\r')
+		{
+			if (i > 0)
+			{
+				newpassword[i] = '\0';
+				d = newpassword;
+				Setcolor(1, 0);
+				gotoxy(x + 1, y + 9); cout << "                          ";
+				Setcolor(7, 0);
+				break;
+			}
+			else
+			{
+				Setcolor(0, 4);
+				gotoxy(x + 1, y + 9); cout << "You didn't type anything !";
+				gotoxy(x + 1, y + 8);
+				Setcolor(7, 0);
+			}
+		}
+		if (temp == 27)
+		{
+			Setcolor(0, 7);
+			return false;
+		}
+	}
+	char checkpassword[100]; int k = 0;
+	gotoxy(x + 1, y + 12);
+	while (true)
+	{
+		char temp = _getch();
+		if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && k <= 25)
+		{
+			checkpassword[k] = temp;
+			++k;
+			cout << checkpassword[k - 1];
+		}
+		if (temp == '\b' && k >= 1)
+		{
+			cout << "\b \b";
+			--k;
+		}
+		if (temp == '\r')
+		{
+			if (k > 0)
+			{
+				checkpassword[k] = '\0';
+				string temp = checkpassword;
+				if (temp == d)
+				{
+					staff1.changepassword(d);
+					break;
+				}
+				else
+				{
+					gotoxy(x + 1, y + 10); cout << "Wrong password !"; gotoxy(x + k + 1, y + 12);
+				}
+			}
+			else
+			{
+				Setcolor(0, 4);
+				gotoxy(x + 1, y + 13); cout << "You didn't type anything !";
+				gotoxy(x + 1, y + 12);
+				Setcolor(7, 0);
+			}
+		}
+		if (temp == 27)
+		{
+			Setcolor(0, 7);
+			return false;
+		}
+	}
+	Setcolor(0, 7);
+	gotoxy(0, y + h + 2);
+	return true;
+}
+bool Login(int x, int y, int h, int w, bool check, string &path)
+{
+	ifstream filein;
+	string matkhau;
+	string d;
+	Setcolor(1, 0);
+	for (int i = y; i <= y + h + 1; i++)
+	{
+		for (int j = x; j < x + w; j++)
+		{
+			gotoxy(j, i); cout << " ";
+		}
+	}
+	Setcolor(11, 0);
+	if (check)
+	{
+		gotoxy(x, y); cout << "         SINH VIEN         ";
+	}
+	else
+	{
+		gotoxy(x, y); cout << "          GIAO VU          ";
+	}
+	Setcolor(0, 7);
+	gotoxy(x + 1, y + 3); cout << "Username:";
+	gotoxy(x + 1, y + 7); cout << "Password: ";
+	Setcolor(7, 0);
+	for (int i = x + 1; i < x + w - 1; i++)
+	{
+		gotoxy(i, y + 4); cout << " ";
+		gotoxy(i, y + 8); cout << " ";
+	}
+	gotoxy(x + 6, y + 10); cout << "ENTER to login";
+	gotoxy(x + 6, y + 11); cout << "ESC to go back";
+	/*Setcolor(0, 7);
+	gotoxy(x + 1, y + 7); cout << "Password: ";
+	Setcolor(7, 0);*/
+	char s[100]; int j = 0;
+	gotoxy(x + 1, y + 4);
+	while(true)
+	{
+		char temp = _getch();
+		if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9') || temp == 32)
+		{
+			s[j] = temp;
+			++j;
+			cout << s[j-1];
+		}
+		if (temp == '\b' && j >= 1)
+		{
+			cout << "\b \b";
+			--j;
+		}
+		if (temp == '\r')
+		{
+			if (j > 0)
+			{
+				s[j] = '\0';
+				Setcolor(1, 0);
+				gotoxy(x + 1, y + 5); cout << "                     ";
+				Setcolor(7, 0);
+				d = s;
+				if (check)
+				{
+					d = "sinhvien\\" + d + ".txt";
+				}
+				else
+				{
+					d = "giaovu\\" + d + ".txt";
+				}
+				filein.open(d, ios::in);
+				filein >> matkhau;
+				gotoxy(0, y + h + 2);
+				if (filein.fail())
+				{
+					gotoxy(x + 6, y + 2);
+					cout << "Sai tai khoan.";
+					gotoxy(x + 1+j, y + 4);
+				}
+				else
+				{
+					Setcolor(1, 0);
+					gotoxy(x + 6, y + 2); cout << "              ";
+					Setcolor(7, 0);
+					break;
+				}
+			}
+			else
+			{
+				Setcolor(0, 4);
+				gotoxy(x + 1, y + 5); cout << "Ban chua nhap gi ca !";
+				gotoxy(x + 1, y + 4);
+				Setcolor(7, 0);
+			}
+		}
+		if (temp == 27)
+		{
+			Setcolor(0, 7);
+			return false;
+		}
+	}
+	char a[100]; gotoxy(x + 1, y + 8);
+	int i = 0;
+	while(true)
+	{
+		char temp = _getch();
+		if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9') || temp == 32)
+		{
+			a[i] = temp;
+			++i;
+			cout << "*";
+		}
+		if (temp == '\b' && i >= 1)
+		{
+			cout << "\b \b";
+			--i;
+		}
+		if (temp == '\r' && i > 0)
+		{
+			a[i] = '\0';
+			string mk = a;
+			if (matkhau == mk)
+			{
+				filein.close();
+				Setcolor(1, 0);
+				gotoxy(x + 6, y + 2); cout << "              ";
+				path = d;
+				Setcolor(7, 0);
+				break;
+			}
+			else
+			{
+				gotoxy(x + 6, y + 6);
+				cout << "Sai mat khau.";
+				gotoxy(x + 1 + i, y + 8);
+			}
+		}
+		if (temp == 27)
+		{
+			Setcolor(0, 7);
+			return false;
+		}
+	}
+	Setcolor(0, 7);
+	/*string d = s;
+	d = "sinhvien//" + d + ".txt";
+	ifstream filein;
+	filein.open(d, ios::in);
+	gotoxy(0, y + h + 2);
+	if (filein.fail())
+	{
+		gotoxy(x + 2, y + 1);
+		cout << "Sai tai khoan hoac mat khau.";
+	}
+	else
+	{
+		filein >> s;
+		cout << s;
+	}*/
+	gotoxy(0, y + h + 2);
+	return true;
+} 
+bool Login2(int x, int y, int h, int w, bool check, string& path)
 {
 	ifstream filein;
 	string matkhau;
@@ -538,7 +1338,7 @@ bool login2(int x, int y, int h, int w, bool check, string& path)
 	}*/
 	return true;
 }
-void giaodiensinhvien(int x, int y, int h, int w,int ythanhsang,string path)
+void GiaoDienSinhVien(int x, int y, int h, int w,int ythanhsang,string path)
 {
 	student a;
 	a.input_file(path);
@@ -588,7 +1388,7 @@ void giaodiensinhvien(int x, int y, int h, int w,int ythanhsang,string path)
 				else if (ythanhsang == y + h + 2)
 				{
 					system("cls");
-					if (giaodiendoimatkhau_sinhvien(35, 5, 15, 50, a))
+					if (GiaoDienDoiMatKhau_SinhVien(35, 5, 15, 50, a))
 					{
 						checkchange = true;
 					};
@@ -613,11 +1413,11 @@ void giaodiensinhvien(int x, int y, int h, int w,int ythanhsang,string path)
 			}
 		}
 		ShowCur(0);
-		menu_sinhvien(x, y, h, w,ythanhsang);
+		Menu_SinhVien(x, y, h, w,ythanhsang);
 	}
 
 }
-void giaodiengiaovu(int x, int y, int h, int w, int ythanhsang, string path)
+void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path)
 {
 	staff b;
 	b.input_file(path);
@@ -681,7 +1481,7 @@ void giaodiengiaovu(int x, int y, int h, int w, int ythanhsang, string path)
 				else if (ythanhsang == y + h + 2)
 				{
 					system("cls");
-					if (giaodiendoimatkhau_giaovu(35, 5, 15, 50, b))
+					if (GiaoDienDoiMatKhau_GiaoVu(35, 5, 15, 50, b))
 					{
 						checkchange = true;
 					};
@@ -709,8 +1509,292 @@ void giaodiengiaovu(int x, int y, int h, int w, int ythanhsang, string path)
 			}
 		}
 		ShowCur(0);
-		menu_giaovu(x, y, h, w, ythanhsang);
+		Menu_GiaoVu(x, y, h, w, ythanhsang);
 	}
 
 
+}
+//void menunhapnamhoc_lophoc_hocki(int x, int y, int h, int w, int ythanhsang)
+//{
+//	create_board_content(x, y, h, w, "NHAP NAM HOC",ythanhsang);
+//	create_board_content(x, y+h+1, h, w, "THEM LOP HOC VA SINH VIEN",ythanhsang);
+//	create_board_content(x, y + 2*(h + 1), h, w, "TAO HOC KI MOI", ythanhsang);
+//}
+//void giaodiennhapnamhoc_lophoc_hocki(int x, int y, int h, int w, int ythanhsang)
+//{
+//	ShowCur(0);
+//	while (true)
+//	{
+//		if (_kbhit()) {
+//			char c = _getch();
+//			if (c == -32)
+//			{
+//				c = _getch();
+//				if (c == 80)
+//				{
+//					if (ythanhsang == y + 2 * (h + 1) + 1)
+//					{
+//						ythanhsang = y + 1;
+//					}
+//					else
+//					{
+//						ythanhsang += 2;
+//					}
+//				}
+//				else if (c == 72)
+//				{
+//					if (ythanhsang == y + 1)
+//					{
+//						ythanhsang = y + 2 * (h + 1) + 1;
+//					}
+//					else
+//					{
+//						ythanhsang -= 2;
+//					}
+//				}
+//			}
+//			else if (c == 13)
+//			{
+//				string year;
+//				if (ythanhsang == y + 1)
+//				{
+//					ShowCur(1);
+//					cout << "Nhap nam hoc (2021-2022): ";
+//					cin >> year;
+//					_mkdir(year.c_str());
+//					system("cls");
+//				}
+//				else if (ythanhsang == y + 3)
+//				{
+//					ofstream fileout;
+//					string lop;
+//					string path;
+//					do
+//					{
+//						cout << "School year: ";
+//						cin >> year;
+//						if (FolderExists(year.c_str()) == false)
+//						{
+//							cout << "There is not this school year. Try again!" << endl;
+//						}
+//					} while (FolderExists(year.c_str()) == false);
+//					char answer;
+//					do
+//					{
+//						cout << "Name of class: ";
+//						cin >> lop;
+//						path = year + "\\" + lop + ".txt";
+//						/*_mkdir(path.c_str());*/
+//						fileout.open(path, ios::out);
+//						fileout.close();
+//						cout << "Complete! Do you want to continious ? (Y/N): ";
+//						cin >> answer;
+//					} while (answer == 'Y' || answer == 'y');
+//					system("cls");
+//				}
+//				else if (ythanhsang == y + 5)
+//				{
+//					int semester;
+//					cout << "St of semester (1,2,3): ";
+//					cin >> semester;
+//					cout << "School year: ";
+//					cin >> year;
+//				}
+//			}
+//		}
+//		ShowCur(0);
+//		menunhapnamhoc_lophoc_hocki(x, y, h, w, ythanhsang);
+//	}
+//}
+
+// day la ham ma se thao tac het tat ca 
+void Menu_n_Board(int n, int x, int y, int h, int w)
+{
+	ShowCur(0);//tắt con trỏ nhấp nháy
+	int ythanhsang = y + 1;// thanh sáng
+	bool check = true;// check true thì la sinhvien, false la giaovu
+	list listyear;
+	string path; // khi đăng nhập vào thành công thì path này sẽ lưu đường dẫn đến file txt của giáo vụ đó hoặc sinh viên đó.
+	while (true)
+	{
+		//begin : day se la noi hien thi ra thanh sang cua menu sinhvien, giaovu (luu y day la hien thi chứ chưa cử động nha)
+		if (ythanhsang == y + 1) // lúc này thanh sáng ở vị trí sinhvien, cập nhật check = true
+		{
+			Setcolor(7, 0);
+			gotoxy(x + 1, y + 1); cout << "STUDENT";
+			Setcolor(0, 7);
+			gotoxy(x + 1, y + 3); cout << "STAFF";
+			check = true;
+		}
+		else if (ythanhsang == y + 3)//lúc này thanh sáng ở vị trí giáo vụ, cập nhật check = false
+		{
+			gotoxy(x + 1, y + 1); cout << "STUDENT";
+			Setcolor(7, 0);
+			gotoxy(x + 1, y + 3); cout << "STAFF";
+			Setcolor(0, 7);
+			check = false;
+		}
+		/// end
+		// begin: đây mới là nơi để điểu khiển thanh sáng, hàm _kbhit() sẽ bắt sự kiện nếu có dấu hiệu người dùng nhập bàn phím thì hàm này return true;
+		// hàm _getch() để bắt xem phím nào đã được nhập (lưu ở dạng char) (vd: 80 là khi nhập mũi tên đ xuống. 72 là khi nhập mũi tên đi lên, enter là 13)
+		// khúc bên dưới này sẽ là nơi điều khiển thanh sáng menu sinhvien, giaovu thật sự, thật chất là sẽ thay đổi vị trí thanh sáng để code ở trên hiện thị ra màn hình console. bởi vậy mới nói code ở trên là để hiện thị
+		if (_kbhit()) {
+			char c = _getch(); 
+			if (c == -32) // bắt sự kiện phím mũi tên
+			{
+				c = _getch();
+				if (c == 80 && ythanhsang < y + 3) // nếu mũi tên đi xuống
+				{
+					ythanhsang += 2; // thanhsang thay đổi vị trí xuống dưới
+				}
+				else if (c == 72 && ythanhsang > y + 1)// nếu mũi tên đi lên
+				{
+					ythanhsang -= 2;// thanh sang thay đổi vị trí đi lên
+				}
+			}
+			else if (c == 13)// nếu nhấn enter
+			{
+				system("cls");// xóa giao diện menu chọn snhvien, giaovu  để hiển thị giao diện login
+				while (true)// while true này để thực hiện các menu bên trong
+				{
+					ShowCur(1);// làm hiển thị con trỏ nhấp nháy lại
+					if (Login2(x, y, 12, 29,check,path) == false) // khúc này sẽ display ra giao diện login, nếu login thất bại thì
+						// sẽ xóa giao diện login đi và break hàm while true này và sau đó sẽ quay lại giao diện menu chọn giaovu, sinhvien 
+					{
+						system("cls");
+						break;
+					}
+					// nếu login thành công thì sẽ xóa giao diện login đi
+					system("cls");
+					ShowCur(0);// xóa con trỏ nhấp nháy
+					if (check) // ở lúc đầu khi ở giao diện menu chon sinhvien, giaovu có biến check để check đăng nhập vs tư cách sinh viên hay giao vụ
+						// khúc này nếu check = true tức là đăng nhập vs tư cách sinh viên nên sẽ vào hàm giaodiensinhvien để thao tác tiếp
+					{
+						GiaoDienSinhVien(35, 5, 1, 50, 6,path);
+					}
+					else
+					{
+						// khúc này nếu check = false tức là đăng nhập vs tư cách giao vu nên sẽ vào hàm giaodiengiaovu để thao tác tiếp
+						GiaoDienGiaoVu(35, 5, 1, 50, 6,path);
+
+					}
+				}
+			}
+		}
+		// đây là khi chẳng có sự kiện phím nào cả thì nó sẽ in ra giao diện menu chọn sinhvien, giaovu như bình thường
+		ShowCur(0);
+		Create_n_Board_Col(n, x, y, h, w);
+	}
+}
+void taofolder()
+{
+	string a;
+	cin >> a;
+	string c;
+	c = a + "\\semester1";
+	/*_mkdir(a.c_str());*/
+	_mkdir(c.c_str());
+	ofstream fileout;
+	c = c + "\\20clc10.txt";
+	fileout.open(c, ios::out);
+	fileout.close();
+}
+bool checkFileWithFstream(string path) {
+	ifstream isf(path);
+	return isf.good();
+}
+void doitenfile()
+{
+	char oldname[] = "sinhvien//21127194.txt";
+	char newname[] = "sinhvien//anhtuan_deptrai.txt";
+
+	/*	Deletes the file if exists */
+	if (rename(oldname, newname) != 0)
+		perror("Error renaming file");
+	else
+		cout << "File renamed successfully";
+}
+//bool is_emptyy(ifstream& filestr, string s)
+//{
+//	string a;
+//	filestr.open(s, ios::in);
+//	filestr >> a;
+//	filestr.close(); // close your file
+//
+//	if (a.length() == 0) { return true; }
+//	else { return false; }
+//}
+
+int main()
+{
+	
+
+	Menu_n_Board(2, 50, 10, 1, 20);
+	/*string path;
+	login2(50, 10, 12, 29, false, path);*/
+	/*sinhvien a;
+	login(50, 10, 12, 27, true, a);
+	a.display();*/
+	/*giaodiensinhvien(35, 5, 1, 50);*/
+	//taofolder();
+	/*giaodiennhapnamhoc_lophoc_hocki(40, 10, 1, 50, 11);*/
+	/*_mkdir("thangngu");
+	_mkdir("thangngu\\haha");
+	if (FolderExists("thangngu\\haha"))
+	{
+		cout << "co thu muc nay";
+	}
+	else
+		cout << "ko co thu muc nay";*/
+	/*giaodiendoimatkhau(35, 10, 15, 50);*/
+	/*list listyear;
+	ifstream filein;
+	string year;
+	do
+	{
+		cin >> year;
+		if (year == "0")
+			continue;
+		pusharrangecreatedyear(listyear, year);
+	} while (year != "0");
+	outputlist(listyear);
+	cout << endl;
+	outputcreatedyear_file(listyear);
+	deletelistcreatedyear(listyear);
+	for (yearcreated* i = listyear.head; i != NULL; i=i->pnext)
+	{
+		cout << i->year << " ";
+	}
+	cout << endl;
+	pushallcreatedyear_file(listyear);
+	outputlist(listyear);
+	deletelistcreatedyear(listyear);*/
+	/*giaovu b;
+	b.docfile("giaovu\\GV01.txt");
+	cout << b.matkhau;
+	giaodiendoimatkhau_giaovu(35, 5, 15, 50,b);*/
+	/*student a;
+	string year;
+	cout << "Nhap nam hoc: ";
+	getline(cin, year);
+	a.input();
+	fstream fileout;
+	fileout.open(year + "\\" + a.getclass() + ".txt", ios::out | ios::app);
+	fileout << endl;
+	fileout << a.getclass();
+	fileout.close();*/
+	/*string a, b, c;
+	fstream fileout;
+	fileout.open("21clc01.txt", ios::in);
+	while(!fileout.eof())
+	{
+		getline(fileout, a,',');
+		getline(fileout, b, ',');
+		getline(fileout, c);
+		cout << a << "-" << b << "-" << c << endl;
+	}
+	fileout.close();*/
+
+
+	return 0;
 }
