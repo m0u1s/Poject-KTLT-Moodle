@@ -1,0 +1,13 @@
+21127189,do ann n,nam,18/07/2003
+21122222,do ann long,nam,18/07/2003
+21127771,do ann Thinh,nam,18/07/2003
+21128888,do ann Binh,nam,18/07/2003
+21127561,do ann Ngo,nam,18/07/2003
+21127342,do ann Dai,nam,18/07/2003
+21127555,do ann Cao,nam,18/07/2003
+21127000,do ann Ha,nam,18/07/2003
+21127122,do ann Haha,nam,18/07/2003
+21127828,do ann Hoho,nam,18/07/2003
+21127180,do ann n,nam,18/07/2003
+00000009,Tang Thanh Ha,nu,21/07/1993
+21111112,Nguyen Thien tai,nu,27/06/2013
