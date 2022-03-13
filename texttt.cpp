@@ -3,10 +3,10 @@
 #include <conio.h>
 #include <fstream>
 #include <string>
-#include <string.h>
 #include <atlstr.h>
 #include <direct.h>
 #include <cassert>
+#include <iomanip>
 
 using namespace std;
 bool FolderExists(const CString& strFolderName)
@@ -51,6 +51,222 @@ void resizeConsole(int width, int height)
 	RECT r;
 	GetWindowRect(console, &r);
 	MoveWindow(console, r.left, r.top, width, height, TRUE);
+}
+bool is_emptyy(string s)
+{
+	fstream filestr;
+	string a;
+	filestr.open(s, ios::in);
+	filestr >> a;
+	filestr.close();
+
+	if (a.length() == 0) { return true; }
+	else { return false; }
+}
+// lien quan den nam
+struct YearCreated {
+	string year;
+	YearCreated* pnext;
+	YearCreated* ppre;
+};
+YearCreated* MakeNodeCreateYear(string year)
+{
+	YearCreated* p = new YearCreated;
+	p->year = year;
+	p->pnext = NULL;
+	p->ppre = NULL;
+	return p;
+}
+int CutYear(string year)
+{
+	for (int i = 0; i < year.length(); i++)
+	{
+		if (year[i] == '-')
+		{
+			return atol(year.substr(0, i).c_str());
+		}
+	}
+}
+void Push1CreatedYear_Tail(YearCreated*& head, string year)
+{
+	YearCreated* p = MakeNodeCreateYear(year);
+	if (head == NULL)
+	{
+		head = p;
+	}
+	else
+	{
+		YearCreated* pCur = head;
+		while (pCur->pnext != NULL)
+		{
+			pCur = pCur->pnext;
+		}
+		pCur->pnext = p;
+		p->ppre = pCur;
+	}
+}
+void Push1CreatedYear_Head(YearCreated*& head, string year)
+{
+	YearCreated* p = MakeNodeCreateYear(year);
+	if (head == NULL)
+	{
+		head = p;
+	}
+	else
+	{
+		p->pnext = head;
+		head->ppre = p;
+		head = p;
+	}
+}
+void PushArrangeCreatedYear(YearCreated*& head, string year)
+{
+	if (head == NULL)
+	{
+		Push1CreatedYear_Head(head, year);
+	}
+	else if (CutYear(head->year) > CutYear(year))
+	{
+		Push1CreatedYear_Head(head, year);
+	}
+	else
+	{
+		YearCreated* p = MakeNodeCreateYear(year);
+		YearCreated* p1 = head;
+		YearCreated* p2 = head->pnext;
+		while (p2 != NULL && p2->year < year)
+		{
+			p1 = p1->pnext;
+			p2 = p2->pnext;
+		}
+		p1->pnext = p;
+		p->ppre = p1;
+		p->pnext = p2;
+		if (p2 != NULL)
+		{
+			p2->ppre = p;
+		}
+	}
+
+}
+void OutputCreatedYear_File(YearCreated*& head)
+{
+	ofstream fileout;
+	YearCreated* pCur = head;
+	while (pCur->pnext != NULL)
+	{
+		pCur = pCur->pnext;
+	}
+	fileout.open("schoolyear.txt", ios::out);
+	for (YearCreated* i = head; i != NULL; i = i->pnext)
+	{
+		if (i == pCur)
+		{
+			fileout << i->year;
+		}
+		else
+		{
+			fileout << i->year << endl;
+		}
+	}
+	fileout.close();
+}
+void PushAllCreatedYear_File(YearCreated*& head)
+{
+	ifstream filein;
+	filein.open("schoolyear.txt", ios::in);
+	string temp;
+	while (!filein.eof())
+	{
+		filein >> temp;
+		Push1CreatedYear_Tail(head, temp);
+	}
+	//deletetail(listyear);
+	filein.close();
+}
+void DeleteListCreatedYear(YearCreated*& head)
+{
+	YearCreated* temp;
+	while (head != NULL)
+	{
+		temp = head;
+		head = head->pnext;
+		if (head != NULL)
+		{
+			head->ppre = NULL;
+		}
+		delete temp;
+	}
+}
+void OutputList(YearCreated*& head)
+{
+	for (YearCreated* i = head; i != NULL; i = i->pnext)
+	{
+		cout << i->year << endl;
+	}
+}
+struct Something
+{
+	string a;
+	Something* pnext;
+	Something* prev;
+};
+Something* MakeNodeSomething(string s)
+{
+	Something* p;
+	p = new Something;
+	p->a = s;
+	p->pnext = NULL;
+	p->prev = NULL;
+	return p;
+}
+void Push1Something_Tail(Something*& head, string s)
+{
+	Something* p = MakeNodeSomething(s);
+	if (head == NULL)
+	{
+		head = p;
+	}
+	else
+	{
+		Something* pCur = head;
+		while (pCur->pnext != NULL)
+		{
+			pCur = pCur->pnext;
+		}
+		pCur->pnext = p;
+		p->prev = pCur;
+	}
+}
+void OutputListSomething(Something*& head)
+{
+	for (Something* i = head; i != NULL; i = i->pnext)
+	{
+		cout << "\t" << i->a << endl;
+	}
+}
+void DeleteListSomething(Something*& head)
+{
+	Something* temp;
+	while (head != NULL)
+	{
+		temp = head;
+		head = head->pnext;
+		if (head != NULL)
+		{
+			head->prev = NULL;
+		}
+		delete temp;
+	}
+}
+bool CheckNameClassInYear(Something*& head, string nameclass)
+{
+	for (Something* i = head; i != NULL; i = i->pnext)
+	{
+		if (i->a == nameclass)
+			return true;
+	}
+	return false;
 }
 struct teacher
 {
@@ -98,10 +314,6 @@ public:
 	{
 		return password;
 	}
-	void changepassword(string newpassword)
-	{
-		password = newpassword;
-	}
 	string getID()
 	{
 		return ID;
@@ -114,14 +326,34 @@ public:
 	{
 		return gender;
 	}
+	string getbirth()
+	{
+		return birth;
+	}
+	void changepassword(string newpassword)
+	{
+		password = newpassword;
+	}
 	void input()
 	{
+		ifstream file;
 		cout << "Name: ";
 		getline(cin, name);
 		cout << "Address: ";
 		getline(cin, address);
-		cout << "ID: ";
-		cin >> ID;
+		while (true)
+		{
+			cout << "ID: ";
+			cin >> ID;
+			if (FolderExists(("sinhvien\\" + ID).c_str()))
+			{
+				cout << "ID exists. Try again!" << endl;
+			}
+			else
+			{
+				break;
+			}
+		}
 		cout << "social ID: ";
 		cin >> socialID;
 		cout << "Gender: ";
@@ -148,14 +380,17 @@ public:
 	}
 	void output()
 	{
-		gotoxy(35, 5); cout << "Name : " << name;
-		gotoxy(35, 7); cout << "Gender : " << gender;
-		gotoxy(35, 9); cout << "ID: " << ID;
-		gotoxy(35, 11); cout << "Address: " << address;
-		gotoxy(35, 13); cout << "Socail ID: " << socialID;
-		gotoxy(35, 15); cout << "Date of birth: " << birth;
-		gotoxy(35, 17); cout << "Phone number: " << phone;
-		gotoxy(35, 19); cout << "Password: " << password;
+		gotoxy(45, 5); cout << "Name : " << name;
+		gotoxy(45, 7); cout << "Gender : " << gender;
+		gotoxy(45, 9); cout << "ID: " << ID;
+		gotoxy(45, 11); cout << "Address: " << address;
+		gotoxy(45, 13); cout << "Socail ID: " << socialID;
+		gotoxy(45, 15); cout << "Date of birth: " << birth;
+		gotoxy(45, 17); cout << "Phone number: " << phone;
+		gotoxy(45, 19); cout << "Password: " << password;
+		Setcolor(7, 0);
+		gotoxy(45, 21); cout << "ESC TO GO BACK. ";
+		Setcolor(0, 7);
 	}
 	void edit_profile();
 };
@@ -212,19 +447,39 @@ public:
 		getline(filein, address);
 		filein.close();
 	}
+	void input_file2(ifstream& filein);
 	void output()
 	{
-		gotoxy(35, 3); cout << "Class : " << CLASS;
-		gotoxy(35, 5); cout << "Name : " << name;
-		gotoxy(35, 7); cout << "Gender : " << gender;
-		gotoxy(35, 9); cout << "ID: " << ID;
-		gotoxy(35, 11); cout << "Address: " << address;
-		gotoxy(35, 13); cout << "Socail ID: " << socialID;
-		gotoxy(35, 15); cout << "Date of birth: " << birth;
-		gotoxy(35, 17); cout << "Phone number: " << phone;
-		gotoxy(35, 19); cout << "Password: " << password;
+		gotoxy(45, 3); cout << "Class : " << CLASS;
+		person::output();
 	}
-	void class_list(fstream class_list);
+	/*void class_list(fstream class_list);*/
+	void View_Class(string classname)
+	{
+		student a;
+		cout << setw(6) << left << "STT";
+		cout << setw(10) << left << "ID";		// độ rộng 5 ký tự, canh trái ID
+		cout << setw(30) << left << "Name";	// độ rộng 30 ký tự, canh trái Name
+		cout << setw(20) << left << "Gender";	// độ rộng 20 ký tự, canh phải Address
+		cout << setw(11) << left << "birth" << endl;
+		cout << setfill('-');		// set fill bằng ký tự '-' thay vì ' '
+		cout << setw(77) << "-" << endl;	// fill 55 ký tự '-'
+		cout << setfill(' ');
+		ifstream filein;
+		filein.open(classname + ".txt", ios::in);
+		int i = 0;
+		while (!filein.eof())
+		{
+			a.input_file2(filein);
+			cout << setw(6) << left << i + 1;
+			cout << setw(10) << left << a.getID();
+			cout << setw(30) << left << a.getname();
+			cout << setw(20) << left << a.getgender();
+			cout << setw(11) << left << a.getbirth() << endl;
+			i++;
+		}
+		filein.close();
+	}
 	void register_course(fstream course_list, fstream& course_registered);
 	void courses_infomation(fstream course_registered);
 	void delete_course(fstream& course_registered);
@@ -247,12 +502,17 @@ public:
 	}
 	// When a semester start
 	// idea for a semester that we have a file name 2021-2022 then inside we have classes,...
-	void create_schoolyear()
+	void create_schoolyear(YearCreated*& head)
 	{
 		string year;
-		cout << "Nhap nam hoc (2021-2022): ";
+		cout << "School year (ex: 2021-2022): ";
 		cin >> year;
+		PushArrangeCreatedYear(head, year);
+		fstream fileout;
 		_mkdir(year.c_str());
+		fileout.open(year + "\\class.txt", ios::out);
+		fileout.close();
+		OutputCreatedYear_File(head);
 		system("cls");
 	}
 	void add_student()
@@ -270,12 +530,14 @@ public:
 		} while (FolderExists(year.c_str()) == false);
 		cin.ignore();*/
 		a.input();
-		string path = "sinhvien\\" + a.getID() + ".txt";
+		string path = "sinhvien\\" + a.getID();
+		_mkdir(path.c_str());
+		path = path + "\\" + a.getID() + ".txt";
 		a.savefile(path);
 		fstream fileout;
 		fileout.open(a.getclass() + ".txt", ios::out | ios::app);
 		fileout << endl;
-		fileout << a.getID() << " - " << a.getname() << " - " << a.getgender();
+		fileout << a.getID() << "," << a.getname() << "," << a.getgender() << "," << a.getbirth();
 		fileout.close();
 	}
 	/*void make_class_file(string nameofclass, string year)
@@ -298,300 +560,20 @@ public:
 		fileout2.close();
 		fileout.close();
 	}*/
-	void create_class()
-	{
-		string mainanswer;
-		string year;
-		fstream filein1;
-		fstream filein2;
-		string lop;
-		string path;
-		while (true)
-		{
-			system("cls");
-			cout << "1. Create classes: " << endl;
-			cout << "2. See list class: " << endl;
-			cout << "0. Go back to menu: " << endl << endl;
-			cout << "Your choice: ";
-			cin >> mainanswer;
-			if (mainanswer == "1")
-			{
-				cout << "If you want to comback, just type 0." << endl;
-				do
-				{
-					cout << "School year (ex: 2021-2022): ";
-					cin >> year;
-					if (FolderExists(year.c_str()) == false)
-					{
-						cout << "There is not this school year. Try again!" << endl;
-					}
-				} while (FolderExists(year.c_str()) == false && year != "0");
-				if (year != "0")
-				{
-					filein2.open(year + "\\class.txt", ios::out | ios::app);
-					char  answer;
-					do
-					{
-						cout << "Name of class: ";
-						cin >> lop;
-						if (lop == "0")break;
-						filein1.open(lop + ".txt", ios::in);
-						if (filein1.fail())
-						{
-							cout << "There is not this file class. Try again!" << endl;
-							answer = 'Y';
-							filein1.close();
-							continue;
-						}
-						else
-						{
-							filein1.close();
-							filein2 << lop << ",";
-						}
-						cout << "Complete! Do you want to continue ? (Y/N): ";
-						cin >> answer;
-					} while (answer == 'Y' || answer == 'y');
-					filein2.close();
-				}
-			}
-			else if (mainanswer == "2")
-			{
-				system("cls");
-				ifstream filein;
-				string a;
-				string answer;
-				string name;
-				string tempp;
-				while (true)
-				{
-					system("cls");
-					filein.open("2021-2022\\class.txt", ios::in);
-					while (!filein.eof())
-					{
-						getline(filein, a, ',');
-						cout << "\t" << a << endl;
-					}
-					filein.close();
-					cout << "1. View the list student of class." << endl;
-					cout << "0. Go back." << endl;
-					cout << "Your answer: ";
-					cin >> answer;
-					if (answer == "1")
-					{
-						int check = 0;
-						while (check == 0)
-						{
-							cout << "Name of class: ";
-							cin >> name;
-							ifstream fileinn;
-							fileinn.open(name + ".txt", ios::in);
-							if (fileinn.fail())
-							{
-								cout << "Wrong name! Try again." << endl;
-								fileinn.close();
-							}
-							else
-							{
-								cout << endl;
-								while (!fileinn.eof())
-								{
-									getline(fileinn, tempp);
-									if (fileinn.eof())
-									{
-										cout << "\t\t" << tempp;
-									}
-									else
-									{
-										cout << "\t\t" << tempp << endl;
-									}
-								}
-								check = 1;
-								cout << "\n\nENTER TO CONTINUE." << endl;
-								system("pause");
-							}
-							fileinn.close();
-						}
-					}
-					else
-					{
-						break;
-					}
-				}
-			}
-			else
-			{
-				system("cls");
-				break;
-			}
-		}
-	}
+	void View_Class(string classname);
+	void create_class(YearCreated*& head);
 	void create_course(Course course, fstream& Course);
 	void create_semester(semester x, fstream& semester);
 	void adjust_Courses(fstream& Course);
 	void delete_course();
 	// End of regis time
-	void read_Classlist();
+	/*void read_Classlist();*/
 	void read_studentList();
 	// End of semester
 	void output_Course_Student();
 	void adjust_StudentGrades();
 	void read_ClassGrades();
 };
-
-// cac ham tuong tac trên console
-
-// lien quan den nam
-
-struct YearCreated {
-	string year;
-	YearCreated* pnext;
-	YearCreated* ppre;
-};
-struct list
-{
-	YearCreated* head = NULL;
-	YearCreated* tail = NULL;
-};
-YearCreated* MakeNodeCreateYear(string year)
-{
-	YearCreated* p = new YearCreated;
-	p->year = year;
-	p->pnext = NULL;
-	p->ppre = NULL;
-	return p;
-}
-int CutYear(string year)
-{
-	for (int i = 0; i < year.length(); i++)
-	{
-		if (year[i] == '-')
-		{
-			return atol(year.substr(0, i).c_str());
-		}
-	}
-}
-void DeleteTail(list& listyear)
-{
-	YearCreated* temp = listyear.tail;
-	listyear.tail = listyear.tail->ppre;
-	listyear.tail->pnext = NULL;
-	delete temp;
-}
-void Push1CreatedYear_Tail(list& listyear, string year)
-{
-	YearCreated* p = MakeNodeCreateYear(year);
-	if (listyear.head == NULL)
-	{
-		listyear.head = p;
-		listyear.tail = p;
-	}
-	else
-	{
-		listyear.tail->pnext = p;
-		p->ppre = listyear.tail;
-		listyear.tail = p;
-	}
-}
-void Push1CreatedYear_Head(list& listyear, string year)
-{
-	YearCreated* p = MakeNodeCreateYear(year);
-	if (listyear.head == NULL)
-	{
-		listyear.head = p;
-		listyear.tail = p;
-	}
-	else
-	{
-		p->pnext = listyear.head;
-		listyear.head->ppre = p;
-		listyear.head = p;
-	}
-}
-void PushArrangeCreatedYear(list& listyear, string year)
-{
-	if (listyear.head == NULL)
-	{
-		Push1CreatedYear_Head(listyear, year);
-	}
-	else if (CutYear(listyear.head->year) > CutYear(year))
-	{
-		Push1CreatedYear_Head(listyear, year);
-	}
-	else
-	{
-		YearCreated* p = MakeNodeCreateYear(year);
-		YearCreated* p1 = listyear.head;
-		YearCreated* p2 = listyear.head->pnext;
-		while (p2 != NULL && p2->year < year)
-		{
-			p1 = p1->pnext;
-			p2 = p2->pnext;
-		}
-		p1->pnext = p;
-		p->ppre = p1;
-		p->pnext = p2;
-		if (p2 != NULL)
-		{
-			p2->ppre = p;
-		}
-		else
-		{
-			listyear.tail = p;
-		}
-	}
-
-}
-void OutputCreatedYear_File(list& listyear)
-{
-	ofstream fileout;
-	fileout.open("schoolyear.txt", ios::out);
-	for (YearCreated* i = listyear.head; i != NULL; i = i->pnext)
-	{
-		if (i == listyear.tail)
-		{
-			fileout << i->year;
-		}
-		else
-		{
-			fileout << i->year << endl;
-		}
-	}
-	fileout.close();
-}
-void PushAllCreatedYear_File(list& listyear)
-{
-	ifstream filein;
-	filein.open("schoolyear.txt", ios::in);
-	string temp;
-	while (!filein.eof())
-	{
-		filein >> temp;
-		Push1CreatedYear_Tail(listyear, temp);
-	}
-	//DeleteTail(listyear);
-	filein.close();
-}
-void DeleteListCreatedYear(list& listyear)
-{
-	YearCreated* temp;
-	while (listyear.head != NULL)
-	{
-		temp = listyear.head;
-		listyear.head = listyear.head->pnext;
-		if (listyear.head != NULL)
-		{
-			listyear.head->ppre = NULL;
-		}
-		delete temp;
-	}
-}
-void OutputList(list& listyear)
-{
-	for (YearCreated* i = listyear.head; i != NULL; i = i->pnext)
-	{
-		cout << i->year << " ";
-	}
-}
 // Cac ham lien quan den giao dien chinh
 bool Login(int, int, int, int, bool, string&);
 void Create_Board(int x, int y, int h, int w)
@@ -648,9 +630,10 @@ void Menu_SinhVien(int x, int y, int h, int w, int ythanhsang)
 {
 	Create_Board_Content(x, y, h, w, "YOUR INFORMATION", ythanhsang);
 	Create_Board_Content(x, y + h + 1, h, w, "CHANGE PASSWORD", ythanhsang);
-	Create_Board_Content(x, y + 2 * (h + 1), h, w, "REGIST COURSE", ythanhsang);
-	Create_Board_Content(x, y + 3 * (h + 1), h, w, "SCORE COURSE", ythanhsang);
-	Create_Board_Content(x, y + 4 * (h + 1), h, w, "LOG OUT", ythanhsang);
+	Create_Board_Content(x, y + 2 * (h + 1), h, w, "VIEW MEMBER IN YOUR CLASS", ythanhsang);
+	Create_Board_Content(x, y + 3 * (h + 1), h, w, "REGIST COURSE", ythanhsang);
+	Create_Board_Content(x, y + 4 * (h + 1), h, w, "SCORE COURSE", ythanhsang);
+	Create_Board_Content(x, y + 5 * (h + 1), h, w, "LOG OUT", ythanhsang);
 }
 void Menu_GiaoVu(int x, int y, int h, int w, int ythanhsang)
 {
@@ -680,7 +663,7 @@ bool GiaoDienDoiMatKhau_SinhVien(int x, int y, int h, int w, student& student1)
 	gotoxy(x, y); cout << "                 Change password                  ";
 	Setcolor(0, 7);
 	gotoxy(x + 1, y + 3); cout << "Current password:";
-	gotoxy(x + 1, y + 7); cout << "New password (max 20char):";
+	gotoxy(x + 1, y + 7); cout << "New password (max 25char):";
 	gotoxy(x + 1, y + 11); cout << "New password again:";
 	Setcolor(7, 0);
 	gotoxy(x + 8, y + 14); cout << "AFTER ENTER TO SAVE CHANGE PLEASE LOG OUT";
@@ -691,12 +674,12 @@ bool GiaoDienDoiMatKhau_SinhVien(int x, int y, int h, int w, student& student1)
 		gotoxy(i, y + 8); cout << " ";
 		gotoxy(i, y + 12); cout << " ";
 	}
-	char currentpassword[20]; int j = 0;
+	char currentpassword[100]; int j = 0;
 	gotoxy(x + 1, y + 4);
 	while (true)
 	{
 		char temp = _getch();
-		if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9') || temp == 32)
+		if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && j <= 25)
 		{
 			currentpassword[j] = temp;
 			++j;
@@ -740,12 +723,12 @@ bool GiaoDienDoiMatKhau_SinhVien(int x, int y, int h, int w, student& student1)
 			return false;
 		}
 	}
-	char newpassword[20]; int i = 0;
+	char newpassword[100]; int i = 0;
 	gotoxy(x + 1, y + 8);
 	while (true)
 	{
 		char temp = _getch();
-		if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9') || temp == 32)
+		if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && i <= 25)
 		{
 			newpassword[i] = temp;
 			++i;
@@ -781,12 +764,12 @@ bool GiaoDienDoiMatKhau_SinhVien(int x, int y, int h, int w, student& student1)
 			return false;
 		}
 	}
-	char checkpassword[20]; int k = 0;
+	char checkpassword[100]; int k = 0;
 	gotoxy(x + 1, y + 12);
 	while (true)
 	{
 		char temp = _getch();
-		if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9') || temp == 32)
+		if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && k <= 25)
 		{
 			checkpassword[k] = temp;
 			++k;
@@ -848,7 +831,7 @@ bool GiaoDienDoiMatKhau_GiaoVu(int x, int y, int h, int w, staff& staff1)
 	gotoxy(x, y); cout << "                 Change password                  ";
 	Setcolor(0, 7);
 	gotoxy(x + 1, y + 3); cout << "Current password:";
-	gotoxy(x + 1, y + 7); cout << "New password (max 20char):";
+	gotoxy(x + 1, y + 7); cout << "New password (max 25char):";
 	gotoxy(x + 1, y + 11); cout << "New password again:";
 	Setcolor(7, 0);
 	gotoxy(x + 8, y + 14); cout << "AFTER ENTER TO SAVE CHANGE PLEASE LOG OUT";
@@ -859,12 +842,12 @@ bool GiaoDienDoiMatKhau_GiaoVu(int x, int y, int h, int w, staff& staff1)
 		gotoxy(i, y + 8); cout << " ";
 		gotoxy(i, y + 12); cout << " ";
 	}
-	char currentpassword[20]; int j = 0;
+	char currentpassword[100]; int j = 0;
 	gotoxy(x + 1, y + 4);
 	while (true)
 	{
 		char temp = _getch();
-		if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9') || temp == 32)
+		if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && j <= 25)
 		{
 			currentpassword[j] = temp;
 			++j;
@@ -908,12 +891,12 @@ bool GiaoDienDoiMatKhau_GiaoVu(int x, int y, int h, int w, staff& staff1)
 			return false;
 		}
 	}
-	char newpassword[20]; int i = 0;
+	char newpassword[100]; int i = 0;
 	gotoxy(x + 1, y + 8);
 	while (true)
 	{
 		char temp = _getch();
-		if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9') || temp == 32)
+		if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && i <= 25)
 		{
 			newpassword[i] = temp;
 			++i;
@@ -949,12 +932,12 @@ bool GiaoDienDoiMatKhau_GiaoVu(int x, int y, int h, int w, staff& staff1)
 			return false;
 		}
 	}
-	char checkpassword[20]; int k = 0;
+	char checkpassword[100]; int k = 0;
 	gotoxy(x + 1, y + 12);
 	while (true)
 	{
 		char temp = _getch();
-		if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9') || temp == 32)
+		if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && k <= 25)
 		{
 			checkpassword[k] = temp;
 			++k;
@@ -1030,7 +1013,7 @@ bool Login(int x, int y, int h, int w, bool check, string& path)
 		gotoxy(i, y + 4); cout << " ";
 		gotoxy(i, y + 8); cout << " ";
 	}
-	gotoxy(x + 6, y + 10); cout << "ENTER to Login";
+	gotoxy(x + 6, y + 10); cout << "ENTER to login";
 	gotoxy(x + 6, y + 11); cout << "ESC to go back";
 	/*Setcolor(0, 7);
 	gotoxy(x + 1, y + 7); cout << "Password: ";
@@ -1194,7 +1177,7 @@ bool Login2(int x, int y, int h, int w, bool check, string& path)
 		gotoxy(i, y + 4); cout << " ";
 		gotoxy(i, y + 8); cout << " ";
 	}
-	gotoxy(x + 6, y + 10); cout << "ENTER to Login";
+	gotoxy(x + 6, y + 10); cout << "ENTER to login";
 	gotoxy(x + 6, y + 11); cout << "ESC to go back";
 	/*Setcolor(0, 7);
 	gotoxy(x + 1, y + 7); cout << "Password: ";
@@ -1207,7 +1190,7 @@ bool Login2(int x, int y, int h, int w, bool check, string& path)
 		while (true)
 		{
 			char temp = _getch();
-			if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9') || temp == 32)
+			if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && j <= 25)
 			{
 				s[j] = temp;
 				++j;
@@ -1229,7 +1212,7 @@ bool Login2(int x, int y, int h, int w, bool check, string& path)
 					d = s;
 					if (check)
 					{
-						d = "sinhvien\\" + d + ".txt";
+						d = "sinhvien\\" + d + "\\" + d + ".txt";
 					}
 					else
 					{
@@ -1261,7 +1244,7 @@ bool Login2(int x, int y, int h, int w, bool check, string& path)
 		while (true)
 		{
 			char temp = _getch();
-			if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9') || temp == 32)
+			if (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || (temp >= '0' && temp <= '9')) && i <= 25)
 			{
 				a[i] = temp;
 				++i;
@@ -1338,7 +1321,7 @@ void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path)
 				c = _getch();
 				if (c == 80)
 				{
-					if (ythanhsang == y + 4 * (h + 1) + 1)
+					if (ythanhsang == y + 5 * (h + 1) + 1)
 					{
 						ythanhsang = y + 1;
 					}
@@ -1351,7 +1334,7 @@ void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path)
 				{
 					if (ythanhsang == y + 1)
 					{
-						ythanhsang = y + 4 * (h + 1) + 1;
+						ythanhsang = y + 5 * (h + 1) + 1;
 					}
 					else
 					{
@@ -1362,23 +1345,14 @@ void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path)
 			}
 			else if (c == 13)
 			{
-				if (ythanhsang == y + 4 * (h + 1) + 1)
+				if (ythanhsang == y + 5 * (h + 1) + 1)
 				{
 					system("cls");
 					if (checkchange)
 					{
-						a.savefile("sinhvien\\" + a.getID() + ".txt");
+						a.savefile("sinhvien\\" + a.getID() + "\\" + a.getID() + ".txt");
 					}
 					break;
-				}
-				else if (ythanhsang == y + h + 2)
-				{
-					system("cls");
-					if (GiaoDienDoiMatKhau_SinhVien(35, 5, 15, 50, a))
-					{
-						checkchange = true;
-					};
-					system("cls");
 				}
 				else if (ythanhsang == y + 1)
 				{
@@ -1396,6 +1370,15 @@ void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path)
 					system("cls");
 
 				}
+				else if (ythanhsang == y + h + 2)
+				{
+					system("cls");
+					if (GiaoDienDoiMatKhau_SinhVien(35, 5, 15, 50, a))
+					{
+						checkchange = true;
+					};
+					system("cls");
+				}
 			}
 		}
 		ShowCur(0);
@@ -1408,6 +1391,11 @@ void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path)
 	staff b;
 	b.input_file(path);
 	bool checkchange = false;
+	YearCreated* head = NULL;
+	if (is_emptyy("schoolyear.txt") == false)
+	{
+		PushAllCreatedYear_File(head);
+	}
 	while (true)
 	{
 		if (_kbhit()) {
@@ -1417,7 +1405,7 @@ void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path)
 				c = _getch();
 				if (c == 80)
 				{
-					if (ythanhsang == y + 8 * (h + 1) + 1)
+					if (ythanhsang == y + 7 * (h + 1) + 1)
 					{
 						ythanhsang = y + 1;
 					}
@@ -1430,7 +1418,7 @@ void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path)
 				{
 					if (ythanhsang == y + 1)
 					{
-						ythanhsang = y + 8 * (h + 1) + 1;
+						ythanhsang = y + 7 * (h + 1) + 1;
 					}
 					else
 					{
@@ -1447,6 +1435,7 @@ void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path)
 					{
 						b.savefile("giaovu\\GV" + b.getID() + ".txt");
 					}
+					DeleteListCreatedYear(head);
 					break;
 				}
 				else if (ythanhsang == y + 1)
@@ -1476,18 +1465,19 @@ void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path)
 				else if (ythanhsang == y + 2 * (h + 1) + 1)
 				{
 					ShowCur(1);
-					b.create_schoolyear();
+					b.create_schoolyear(head);
 				}
 				else if (ythanhsang == y + 3 * (h + 1) + 1)
 				{
 					system("cls");
 					ShowCur(1);
-					b.create_class();
+					b.create_class(head);
 					system("cls");
 				}
 				else if (ythanhsang == y + 6 * (h + 1) + 1)
 				{
 					system("cls");
+					ShowCur(1);
 					b.add_student();
 					system("cls");
 				}
@@ -1499,11 +1489,17 @@ void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path)
 
 
 }
+void BangTaoLop(int x, int y, int h, int w, int ythanhsang) {
+	Create_Board_Content(x, y, h, w, "CREATE CLASSES FROM TXT FILE", ythanhsang);
+	Create_Board_Content(x, y + h + 1, 1, 50, "CREATE CLASSES", ythanhsang);
+	Create_Board_Content(x, y + 2 * (h + 1), 1, 50, "SEE LIST CLASS", ythanhsang);
+	Create_Board_Content(x, y + 3 * (h + 1), 1, 50, "GO BACK TO MENU", ythanhsang);
+}
 //void menunhapnamhoc_lophoc_hocki(int x, int y, int h, int w, int ythanhsang)
 //{
-//	Create_Board_Content(x, y, h, w, "NHAP NAM HOC",ythanhsang);
-//	Create_Board_Content(x, y+h+1, h, w, "THEM LOP HOC VA SINH VIEN",ythanhsang);
-//	Create_Board_Content(x, y + 2*(h + 1), h, w, "TAO HOC KI MOI", ythanhsang);
+//	create_board_content(x, y, h, w, "NHAP NAM HOC",ythanhsang);
+//	create_board_content(x, y+h+1, h, w, "THEM LOP HOC VA SINH VIEN",ythanhsang);
+//	create_board_content(x, y + 2*(h + 1), h, w, "TAO HOC KI MOI", ythanhsang);
 //}
 //void giaodiennhapnamhoc_lophoc_hocki(int x, int y, int h, int w, int ythanhsang)
 //{
@@ -1598,7 +1594,6 @@ void Menu_n_Board(int n, int x, int y, int h, int w)
 	ShowCur(0);//tắt con trỏ nhấp nháy
 	int ythanhsang = y + 1;// thanh sáng
 	bool check = true;// check true thì la sinhvien, false la giaovu
-	list listyear;
 	string path; // khi đăng nhập vào thành công thì path này sẽ lưu đường dẫn đến file txt của giáo vụ đó hoặc sinh viên đó.
 	while (true)
 	{
@@ -1639,27 +1634,27 @@ void Menu_n_Board(int n, int x, int y, int h, int w)
 			}
 			else if (c == 13)// nếu nhấn enter
 			{
-				system("cls");// xóa giao diện menu chọn snhvien, giaovu  để hiển thị giao diện Login
+				system("cls");// xóa giao diện menu chọn snhvien, giaovu  để hiển thị giao diện login
 				while (true)// while true này để thực hiện các menu bên trong
 				{
 					ShowCur(1);// làm hiển thị con trỏ nhấp nháy lại
-					if (Login2(x, y, 12, 29, check, path) == false) // khúc này sẽ display ra giao diện Login, nếu Login thất bại thì
-						// sẽ xóa giao diện Login đi và break hàm while true này và sau đó sẽ quay lại giao diện menu chọn giaovu, sinhvien 
+					if (Login2(x, y, 12, 29, check, path) == false) // khúc này sẽ display ra giao diện login, nếu login thất bại thì
+						// sẽ xóa giao diện login đi và break hàm while true này và sau đó sẽ quay lại giao diện menu chọn giaovu, sinhvien 
 					{
 						system("cls");
 						break;
 					}
-					// nếu Login thành công thì sẽ xóa giao diện Login đi
+					// nếu login thành công thì sẽ xóa giao diện login đi
 					system("cls");
 					ShowCur(0);// xóa con trỏ nhấp nháy
 					if (check) // ở lúc đầu khi ở giao diện menu chon sinhvien, giaovu có biến check để check đăng nhập vs tư cách sinh viên hay giao vụ
-						// khúc này nếu check = true tức là đăng nhập vs tư cách sinh viên nên sẽ vào hàm GiaoDienSinhVien để thao tác tiếp
+						// khúc này nếu check = true tức là đăng nhập vs tư cách sinh viên nên sẽ vào hàm giaodiensinhvien để thao tác tiếp
 					{
 						GiaoDienSinhVien(35, 5, 1, 50, 6, path);
 					}
 					else
 					{
-						// khúc này nếu check = false tức là đăng nhập vs tư cách giao vu nên sẽ vào hàm GiaoDienGiaoVu để thao tác tiếp
+						// khúc này nếu check = false tức là đăng nhập vs tư cách giao vu nên sẽ vào hàm giaodiengiaovu để thao tác tiếp
 						GiaoDienGiaoVu(35, 5, 1, 50, 6, path);
 
 					}
@@ -1671,7 +1666,8 @@ void Menu_n_Board(int n, int x, int y, int h, int w)
 		Create_n_Board_Col(n, x, y, h, w);
 	}
 }
-void CreateFolder()
+// các hàm bên ngoài
+void taofolder()
 {
 	string a;
 	cin >> a;
@@ -1688,7 +1684,7 @@ bool checkFileWithFstream(string path) {
 	ifstream isf(path);
 	return isf.good();
 }
-void RenameFile()
+void doitenfile()
 {
 	char oldname[] = "sinhvien//21127194.txt";
 	char newname[] = "sinhvien//anhtuan_deptrai.txt";
@@ -1699,23 +1695,50 @@ void RenameFile()
 	else
 		cout << "File renamed successfully";
 }
-//bool is_emptyy(ifstream& filestr, string s)
-//{
-//	string a;
-//	filestr.open(s, ios::in);
-//	filestr >> a;
-//	filestr.close(); // close your file
-//
-//	if (a.length() == 0) { return true; }
-//	else { return false; }
-//}
+//Các Hàm của Staff 
+void MoDepTrai() {
+	cout << "Mo dep trai\n";
+	system("pause");
+	system("cls");
+}
+void staff::create_class(YearCreated*& head) {
+	int x = 35, y = 5, h = 1, w = 50, ythanhsang = 6;
+	while (true) {
+		BangTaoLop(x, y, h, w, ythanhsang);
+		if (_kbhit()) {
+			char c = _getch();
+			if (c == -32) {
+				c = _getch();
+				if (c == 80) {
+					if (ythanhsang == y + 3 * (h + 1) + 1) ythanhsang = y + 1;
+					else ythanhsang += 2;
+				}
+				else if (c == 72) {
+					if (ythanhsang == y + 1) ythanhsang = y + 3 * (h + 1) + 1;
+					else ythanhsang -= 2;
+				}
+			}
+			else if (c == 13) {
+				system("cls");
+				if (ythanhsang == y + 1) MoDepTrai();
+				else if (ythanhsang == y + (h + 1) + 1) {
+					system("cls");
+					cout << "Mo Ngu\n";
+					system("pause");
+					system("cls");
+				}
+				else if (ythanhsang == y + 2 * (h + 1) + 1) MoDepTrai();
+				else if (ythanhsang == y + 3 * (h + 1) + 1) break;
+			}
+		}
+		ShowCur(0);
+	}
+}
 
 int main()
 {
 
 
 	Menu_n_Board(2, 50, 10, 1, 20);
-
-
 	return 0;
 }
