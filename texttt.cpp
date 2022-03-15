@@ -1917,6 +1917,19 @@ void doitenfile()
 	else
 		cout << "File renamed successfully";
 }
+bool checkBirth(string birth)
+{
+	if (birth.length() != 10)
+		return false;
+	for (int i = 0; i < birth.length(); i++)
+	{
+		if (i != 2 && i != 5 && isdigit(birth[i]) == 0)
+			return false;
+		if ((i == 2 || i == 5) && birth[i] != '/')
+			return false;
+	}
+	return true;
+}
 int main()
 {
 	Menu_n_Board(2, 50, 10, 1, 20);
