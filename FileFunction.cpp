@@ -1,29 +1,69 @@
 #include"MainFunction.h"
-void taofolder()
+//Hàm bên ngoài
+bool FolderExists(const CString& strFolderName)
 {
-	string a;
-	cin >> a;
-	string c;
-	c = a + "\\semester1";
-	/*_mkdir(a.c_str());*/
-	_mkdir(c.c_str());
-	ofstream fileout;
-	c = c + "\\20clc10.txt";
-	fileout.open(c, ios::out);
-	fileout.close();
+	return GetFileAttributes(strFolderName) != INVALID_FILE_ATTRIBUTES;
 }
-bool checkFileWithFstream(string path) {
-	ifstream isf(path);
-	return isf.good();
-}
-void doitenfile()
+void textcolor(int x)
 {
-	char oldname[] = "sinhvien//21127194.txt";
-	char newname[] = "sinhvien//anhtuan_deptrai.txt";
+	HANDLE mau;
+	mau = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(mau, x);
+}
+void gotoxy(int x, int y)
+{
+	HANDLE hConsoleOuput;
+	COORD Cursor_an_Pos = { x ,y };
+	hConsoleOuput = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(hConsoleOuput, Cursor_an_Pos);
+}
+void Setcolor(int backgound_color, int text_color)
+{
+	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+	int color_code = backgound_color * 16 + text_color;
+	SetConsoleTextAttribute(hStdout, color_code);
+}
+BOOL WINAPI SetConsoleTitle(
+	_In_ LPCTSTR lpConsoleTitle
+);
+void ShowCur(bool CursorVisibility)
+{
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO ConCurInf;
 
-	/*	Deletes the file if exists */
-	if (rename(oldname, newname) != 0)
-		perror("Error renaming file");
-	else
-		cout << "File renamed successfully";
+	ConCurInf.dwSize = 10;
+	ConCurInf.bVisible = CursorVisibility;
+
+	SetConsoleCursorInfo(handle, &ConCurInf);
+}
+void resizeConsole(int width, int height)
+{
+	HWND console = GetConsoleWindow();
+	RECT r;
+	GetWindowRect(console, &r);
+	MoveWindow(console, r.left, r.top, width, height, TRUE);
+}
+bool is_emptyy(string s)
+{
+	ifstream filestr;
+	string a;
+	filestr.open(s, ios::in);
+	filestr >> a;
+	filestr.close();
+
+	if (a.length() == 0) { return true; }
+	else { return false; }
+}
+bool checkBirth(string birth)
+{
+	if (birth.length() != 10)
+		return false;
+	for (int i = 0; i < birth.length(); i++)
+	{
+		if (i != 2 && i != 5 && isdigit(birth[i]) == 0)
+			return false;
+		if ((i == 2 || i == 5) && birth[i] != '/')
+			return false;
+	}
+	return true;
 }

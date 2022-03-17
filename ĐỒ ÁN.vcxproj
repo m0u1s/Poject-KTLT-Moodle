@@ -143,7 +143,7 @@
     <ClCompile Include="DisplayFunction.cpp" />
     <ClCompile Include="FileFunction.cpp" />
     <ClCompile Include="SomethingFunction.cpp" />
-    <ClCompile Include="texttt.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="YearFunction.cpp" />
   </ItemGroup>
   <ItemGroup>

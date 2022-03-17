@@ -6,63 +6,65 @@
 #include <string>
 #include <atlstr.h>
 #include <direct.h>
-#include <cassert>
+#include <cassert> 
 #include <iomanip>
 using namespace std;
-//function needed
-bool FolderExists(const CString& strFolderName);
-void textcolor(int x);
-void gotoxy(int x, int y);
-void Setcolor(int backgound_color, int text_color);
-BOOL WINAPI SetConsoleTitle(
-	_In_ LPCTSTR lpConsoleTitle
-);
-void ShowCur(bool CursorVisibility);
-void resizeConsole(int width, int height);
-bool is_emptyy(string s);
-//
-struct YearCreated {
-	string year;
-	YearCreated* pnext;
-	YearCreated* ppre;
-};
+//struct
 struct Something
 {
 	string a;
 	Something* pnext;
 	Something* prev;
 };
-struct teacher
-{
-	string theory;
-	string practice;
+struct YearCreated {
+	string year;
+	YearCreated* pnext;
+	YearCreated* ppre;
 };
-struct schedule
+struct date
 {
-	string theory;
-	string practice;
+	short day, month;
 };
-struct semester
+struct tempStudent
 {
 	string name;
-	string start;
-	string end;
+	string ID;
+	string Class;
+	tempStudent* pnext = NULL;
 };
-class Course
+struct Course
 {
-public:
-	string semester;
 	string Course_Code;
 	string Course_Name;
-	int credits;
-	string Class;
-	schedule Schedule;
-
-private:
-	teacher Teacher;
+	short credits;
+	short Maxstudent = 50;
+	string Weekday1;
+	short shift1;
+	string Weekday2;
+	short shift2;
+	string Teacher;
+	tempStudent* headStudent = NULL;// danh sách liên kết student trong course;
+	Course* pnext = NULL; // liên kết với phần tử course tiếp theo
 };
-class person
-{
+//class
+class semester {
+public:
+	string SchoolYear = "0";
+	string name = "0";
+	date start;
+	date end;
+	date StartRegCourse;
+	date EndRegCourse;
+	bool CheckEndReg = false;
+	Course* CreatedCourse = NULL;// danh sach liên kết các Course đã tạo;
+	void filein_Cur(date& currentday);
+	void PushTailCourse(Course*& a);// tham số là một course đã sao chép đầy đủ thông tin, các hs trong course từ file txt bây giờ thêm vào cuối danh sách liên kết CreatedCourse
+	void DeleteCourse(short Course_code, short Course_Name);// Xóa course,tham số truyền vào là id course, tên course cần xóa
+	void BangDanhSachCourse();
+	void DeleteListCourse();
+	~semester();
+};
+class person {
 protected:
 	string ID;
 	string password;
@@ -80,13 +82,12 @@ public:
 	string getgender();
 	string getbirth();
 	void changepassword(string newpassword);
-	void input();
 	void input_file(string path);
+	void input();
 	void output();
 	void edit_profile();
 };
-class student : public person
-{
+class student : public person {
 private:
 	string CLASS;
 public:
@@ -107,39 +108,19 @@ public:
 private:
 	void view_results(fstream result_list); // b/c 1 student only see his/her results other can't
 };
-class staff : public person
-{
+class staff : public person {
 public:
 	void savefile(string path);
-	void create_schoolyear(YearCreated*& head);
+
 	// When a semester start
 	// idea for a semester that we have a file name 2021-2022 then inside we have classes,...
+	void create_schoolyear(YearCreated*& head, const date& currentday);
 	void add_student();
-	/*void make_class_file(string nameofclass, string year)
-	{
-		ifstream fileout; ofstream fileout2; string s;
-		fileout.open(nameofclass + ".txt", ios::out);
-		fileout2.open(year + "\\" + nameofclass + ".txt", ios::out);
-		while (!fileout.eof())
-		{
-			getline(fileout, s);
-			if (fileout.eof())
-			{
-				fileout2 << s;
-			}
-			else
-			{
-				fileout2 << s << endl;
-			}
-		}
-		fileout2.close();
-		fileout.close();
-	}*/
 	void View_Class(string classname);
 	void create_class(YearCreated*& head);
-	void create_course(Course course, fstream& Course);
-	void create_semester(semester x, fstream& semester);
-	void adjust_Courses(fstream& Course);
+	void create_course();
+	void create_semester(semester& currentsemester, date& currentday);
+	void adjust_Courses(fstream Course);
 	void delete_course();
 	// End of regis time
 	/*void read_Classlist();*/
