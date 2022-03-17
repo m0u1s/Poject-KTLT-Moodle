@@ -1,8 +1,4 @@
 ﻿  texttt.cpp
-C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\texttt.cpp(25,26): warning C4838: conversion from 'int' to 'SHORT' requires a narrowing conversion
-C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\texttt.cpp(25,29): warning C4838: conversion from 'int' to 'SHORT' requires a narrowing conversion
-C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\texttt.cpp(36,2): warning C4273: 'SetConsoleTitleW': inconsistent dll linkage
+C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\class.h(18,2): warning C4273: 'SetConsoleTitleW': inconsistent dll linkage
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\consoleapi2.h(510,1): message : see previous definition of 'SetConsoleTitleW'
-C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\texttt.cpp(82,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\texttt.cpp(89): warning C4715: 'CutYear': not all control paths return a value
   ĐỒ ÁN.vcxproj -> C:\Users\LENOVO\source\repos\ĐỒ ÁN\Debug\ĐỒ ÁN.exe
