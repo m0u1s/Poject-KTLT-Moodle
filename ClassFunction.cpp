@@ -65,7 +65,109 @@ semester::~semester() {
 //chưa hoàn thành của semester
 void semester::PushTailCourse(Course*& a) 
 {
-	// CreatedCourse
+	system("cls");
+	Course* CurrentCourse = a;
+	while (CurrentCourse->pnext != nullptr)
+	{
+		CurrentCourse = CurrentCourse->pnext;
+	}
+	if (a == nullptr) {
+		a = new Course;
+		cout << "Enter the Course-code: ";
+		cin >> a->Course_Code;
+		cout << "Enter the Course-name: ";
+		cin >> a->Course_Name;
+		cout << "Enter the Credits: ";
+		cin >> a->credits;
+		cout << "Enter the Course-teacher: ";
+		cin >> a->Teacher;
+		cout << "Enter the first day of class in week: ";
+		cin >> a->Weekday1;
+		cout << "Enter the first day shift of class in week: ";
+		cin >> a->shift1;
+		cout << "Enter the first day shift of class in week: ";
+		cout << "Enter the second day of class in week: ";
+		cin >> a->Weekday2;
+		cout << "Enter the second day shift of class in week: ";
+		cin >> a->shift2;
+
+		tempStudent* Head = new tempStudent;
+		tempStudent* Cur = Head;
+
+		int i = 1;
+		cout << "Now you will keep entering 50 student into the course!";
+		while (i <= 50) {
+			if (i == 1 || i == 11 || i == 21 || i == 31 || i == 41) {
+				cout << "You are adjust the " << i << "st Student\n";
+			}
+			else if (i == 2 || i == 12 || i == 22 || i == 32 || i == 42) {
+				cout << "You are adjust the " << i << "nd Student\n";
+			}
+			else if (i == 3 || i == 13 || i == 23 || i == 33 || i == 43) {
+				cout << "You are adjust the " << i << "rd Student\n";
+			}
+			else cout << "You are adjust the " << i << "th Student\n";
+			cout << "Enter the sutdent's class: ";
+			cin >> Cur->Class;
+			cout << "Enter the student's ID: ";
+			cin >> Cur->ID;
+			cout << "Enter the sutdent's class: ";
+			cin >> Cur->name;
+			i++;
+			Cur = Cur->pnext;
+			system("cls");
+		}
+		cout << "You have finished";
+	}
+	else {
+		cout << "Enter the Course-code: "; 
+		cin >> CurrentCourse->Course_Code;
+		cout << "Enter the Course-name: ";
+		cin >> CurrentCourse->Course_Name;
+		cout << "Enter the Credits: ";
+		cin >> CurrentCourse->credits;
+		cout << "Enter the Course-teacher: ";
+		cin >> CurrentCourse->Teacher;
+		cout << "Enter the first day of class in week: ";
+		cin >> CurrentCourse->Weekday1;
+		cout << "Enter the first day shift of class in week: ";
+		cin >> CurrentCourse->shift1;
+		cout << "Enter the first day shift of class in week: ";
+		cout << "Enter the second day of class in week: ";
+		cin >> CurrentCourse->Weekday2;
+		cout << "Enter the second day shift of class in week: ";
+		cin >> CurrentCourse->shift2;
+		
+		tempStudent* Head = new tempStudent;
+		tempStudent* Cur = Head; 
+		
+		int i = 1; 
+		cout << "Now you will keep entering 50 student into the course!"; 
+		while (i <= 50) {
+			if (i == 1 || i == 11 || i == 21 || i == 31 || i == 41) {
+				cout << "You are adjust the " << i << "st Student\n";
+			}
+			else if (i == 2 || i == 12 || i == 22 || i == 32 || i == 42) {
+				cout << "You are adjust the " << i << "nd Student\n";
+			}
+			else if (i == 3 || i == 13 || i == 23 || i == 33 || i == 43) {
+				cout << "You are adjust the " << i << "rd Student\n";
+			}
+			else cout << "You are adjust the " << i << "th Student\n";
+			cout << "Enter the sutdent's class: ";
+			cin >> Cur->Class;
+			cout << "Enter the student's ID: ";
+			cin >> Cur->ID;
+			cout << "Enter the sutdent's class: ";
+			cin >> Cur->name;
+			i++;
+			Cur = Cur->pnext;
+			system("cls");
+		}
+		cout << "You have finished"; 
+	}
+	system("pause");
+	system("cls");
 }
 void semester::DeleteCourse(short Course_code, short Course_Name)
 {
