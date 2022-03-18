@@ -58,31 +58,18 @@ void BangTaoLop(int x, int y, int h, int w, int ythanhsang) {
 //Hàm liên quan đến giao diện chính
 bool checkendreg(date& start, date& end, date cur)
 {
-	if (cur.month > end.month || (cur.day == 1 && (cur.month == 9 || cur.month == 1 || cur.month == 5)))
+	if (cur.month > end.month || (cur.day == 1 && (cur.month == 9 || cur.month == 1 || cur.month == 5)) || cur.month < start.month)
 	{
 		return true;
 	}
 	else if (cur.month == end.month)
 	{
-		if (cur.day > end.day)
+		if (cur.day > end.day || cur.day < start.day)
 		{
 			return true;
 		}
 	}
 	return false;
-}
-bool checkbeginreg(date& start, date& end, date cur)
-{
-	if (cur.month < start.month)
-		return false;
-	else if (cur.month == start.month)
-	{
-		if (cur.day < start.day)
-		{
-			return false;
-		}
-	}
-	return true;
 }
 void Menu_SinhVien(int x, int y, int h, int w, int ythanhsang)
 {
@@ -625,7 +612,7 @@ void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path, s
 			}
 			else
 			{
-				gotoxy(48, 3); cout << "End Course registration";
+				gotoxy(42, 3); cout << "Course registration ended or didn't happen";
 			}
 		}
 		if (_kbhit()) {
@@ -706,7 +693,14 @@ void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path, s
 				else if (ythanhsang == y + 3*(h + 1) +1)
 				{
 					system("cls");
-					currentsemester.BangDanhSachCourse();
+					if (currentsemester.CheckEndReg == false)
+					{
+						currentsemester.BangDanhSachCourse();
+					}
+					else
+					{
+						cout << "It doesn't begin or the registration ended." << endl;
+					}
 					system("pause");
 					system("cls");
 				}

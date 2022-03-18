@@ -35,7 +35,6 @@ void Create_n_Board_Row(int n, int x, int y, int h, int w);
 void BangTaoLop(int x, int y, int h, int w, int ythanhsang);
 
 bool checkendreg(date& start, date& end, date cur);
-bool checkbeginreg(date& start, date& end, date cur);
 void Menu_SinhVien(int x, int y, int h, int w, int ythanhsang);
 void Menu_GiaoVu(int x, int y, int h, int w, int ythanhsang);
 bool GiaoDienDoiMatKhau_SinhVien(int x, int y, int h, int w, student& student1);

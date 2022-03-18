@@ -730,37 +730,45 @@ void staff::create_course(semester * &a) {
 	ShowCur(1);
 	Course *tempppp;
 	string answer;
-	while (true)
+	if (a->name != "0")
 	{
-		system("cls");
-		a->BangDanhSachCourse();
-		cout << endl << endl;
-		cout << "1. Create Course." << endl;
-		cout << "0. Go Back." << endl;
-		cout << "Your choice: ";
-		cin >> answer;
-		if (answer == "1")
-		{
-			tempppp = new Course;
-			cout << "Name of Course: "; cin.ignore(); getline(cin, tempppp->Course_Name);
-			cout << "ID Course: "; getline(cin, tempppp->Course_Code);
-			cout << "Credit: "; cin >> tempppp->credits;
-			cout << "Max student in the course: "; cin >> tempppp->Maxstudent;
-			cout << "Weekday of session 1 (Mon/Tue/Wed/Thu/Fri/Sat) : "; cin >> tempppp->Weekday1;
-			cout << "Shift of session 1: "; cin >> tempppp->shift1;
-			cout << "Weekday of session 2 (Mon/Tue/Wed/Thu/Fri/Sat) : "; cin >> tempppp->Weekday2;
-			cout << "Shift of session 2: "; cin >> tempppp->shift2;
-			cout << "Room : "; cin >> tempppp->Room;
-			cout << "Name of Teacher: ";
-			cin.ignore();
-			getline(cin, tempppp->Teacher);
-			a->InsertCourse(tempppp);
-		}
-		else
+		while (true)
 		{
 			system("cls");
-			break;
+			a->BangDanhSachCourse();
+			cout << endl << endl;
+			cout << "1. Create Course." << endl;
+			cout << "0. Go Back." << endl;
+			cout << "Your choice: ";
+			cin >> answer;
+			if (answer == "1")
+			{
+				tempppp = new Course;
+				cout << "Name of Course: "; cin.ignore(); getline(cin, tempppp->Course_Name);
+				cout << "ID Course: "; getline(cin, tempppp->Course_Code);
+				cout << "Credit: "; cin >> tempppp->credits;
+				cout << "Max student in the course: "; cin >> tempppp->Maxstudent;
+				cout << "Weekday of session 1 (Mon/Tue/Wed/Thu/Fri/Sat) : "; cin >> tempppp->Weekday1;
+				cout << "Shift of session 1: "; cin >> tempppp->shift1;
+				cout << "Weekday of session 2 (Mon/Tue/Wed/Thu/Fri/Sat) : "; cin >> tempppp->Weekday2;
+				cout << "Shift of session 2: "; cin >> tempppp->shift2;
+				cout << "Room : "; cin >> tempppp->Room;
+				cout << "Name of Teacher: ";
+				cin.ignore();
+				getline(cin, tempppp->Teacher);
+				a->InsertCourse(tempppp);
+			}
+			else
+			{
+				system("cls");
+				break;
+			}
 		}
+	}
+	else
+	{
+		cout << "You did not create a current semester so you can't do this right now." << endl;
+		system("pause");
 	}
 }
 void staff::adjust_Courses(fstream Course) {

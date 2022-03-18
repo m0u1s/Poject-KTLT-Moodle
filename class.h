@@ -95,6 +95,7 @@ class student : public person {
 private:
 	string CLASS;
 public:
+	Course *RegistedCourse = NULL;
 	void savefile(string path);
 	string getclass();
 	void input();
