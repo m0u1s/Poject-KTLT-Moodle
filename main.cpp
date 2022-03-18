@@ -1,20 +1,14 @@
-//C++ librabry
-#include <iostream>
-#include <windows.h>
-#include <conio.h>
-#include <fstream>
-#include <string>
-#include <atlstr.h>
-#include <direct.h>
-#include <cassert> 
-#include <iomanip>
-
-//Header
 #include "MainFunction.h"
 
-using namespace std;
+// Đây là hàm thao tác hết tất cả
 int main()
 {
 	Menu_n_Board(2, 50, 10, 1, 20);
+	/*semester ab;
+	date currentday; semester* a = &ab;
+	ab.filein_Cur(currentday);
+	staff abc;
+	abc.create_course(a);
+	ab.BangDanhSachCourse();*/
 	return 0;
 }

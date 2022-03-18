@@ -1,5 +1,5 @@
 #include"MainFunction.h"
-//Hàm bên ngoài
+//HÃ m bÃªn ngoÃ i
 bool FolderExists(const CString& strFolderName)
 {
 	return GetFileAttributes(strFolderName) != INVALID_FILE_ATTRIBUTES;

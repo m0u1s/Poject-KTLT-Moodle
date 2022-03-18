@@ -1,4 +1,4 @@
-﻿//C++ library
+﻿#pragma once
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
@@ -43,6 +43,8 @@ struct Course
 	string Weekday2;
 	short shift2;
 	string Teacher;
+	short CurNumStudent = 0;
+	string Room;
 	tempStudent* headStudent = NULL;// danh sách liên kết student trong course;
 	Course* pnext = NULL; // liên kết với phần tử course tiếp theo
 };
@@ -56,10 +58,12 @@ public:
 	date StartRegCourse;
 	date EndRegCourse;
 	bool CheckEndReg = false;
-	Course* CreatedCourse = NULL;// danh sach liên kết các Course đã tạo;
+	Course* CreatedCourse = NULL;
+	void PushTailCourse(Course*& a);
+	void PushTailStudent(Course*& a, tempStudent*& b);
 	void filein_Cur(date& currentday);
-	void PushTailCourse(Course*& a);// tham số là một course đã sao chép đầy đủ thông tin, các hs trong course từ file txt bây giờ thêm vào cuối danh sách liên kết CreatedCourse
-	void DeleteCourse(short Course_code, short Course_Name);// Xóa course,tham số truyền vào là id course, tên course cần xóa
+	void DeleteCourse(string Course_code, string Course_Name);
+	void InsertCourse(Course*& a);
 	void BangDanhSachCourse();
 	void DeleteListCourse();
 	~semester();
@@ -118,7 +122,7 @@ public:
 	void add_student();
 	void View_Class(string classname);
 	void create_class(YearCreated*& head);
-	void create_course();
+	void create_course(semester *& a);
 	void create_semester(semester& currentsemester, date& currentday);
 	void adjust_Courses(fstream Course);
 	void delete_course();

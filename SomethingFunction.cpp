@@ -1,5 +1,4 @@
 #include "MainFunction.h"
-using namespace std;
 Something* MakeNodeSomething(string s)
 {
 	Something* p;

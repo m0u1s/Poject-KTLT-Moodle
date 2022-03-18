@@ -1,6 +1,4 @@
-﻿//Header
-#include "MainFunction.h"
-using namespace std;
+﻿#include "MainFunction.h"
 YearCreated* MakeNodeCreateYear(string year)
 {
 	YearCreated* p = new YearCreated;

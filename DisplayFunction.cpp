@@ -1,13 +1,4 @@
 ﻿#include"MainFunction.h"
-using namespace std;
-//Modeptrai
-void Modeptrai() {
-	system("cls");
-	cout << "Mo dep trai";
-	system("pause");
-	system("cls");
-}
-//Giao diện 
 void Create_Board_Content(int x, int y, int h, int w, string content, int ythanhsang, int j)
 {
 	for (int i = x; i < x + w; i++)
@@ -712,6 +703,13 @@ void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path, s
 					system("pause");
 					system("cls");
 				}
+				else if (ythanhsang == y + 3*(h + 1) +1)
+				{
+					system("cls");
+					currentsemester.BangDanhSachCourse();
+					system("pause");
+					system("cls");
+				}
 			}
 		}
 		ShowCur(0);
@@ -822,6 +820,13 @@ void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path, sem
 				{
 					system("cls");
 					b.create_semester(currentsemester, currentday);
+					system("cls");
+				}
+				else if (ythanhsang == y + 5 * (h + 1) + 1)
+				{
+					system("cls");
+					semester *tem = &currentsemester;
+					b.create_course(tem);
 					system("cls");
 				}
 				else if (ythanhsang == y + 6 * (h + 1) + 1)
