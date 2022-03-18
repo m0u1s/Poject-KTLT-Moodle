@@ -1,0 +1,4 @@
+﻿  DisplayFunction.cpp
+C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\MainFunction.h(11,2): warning C4273: 'SetConsoleTitleW': inconsistent dll linkage
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\consoleapi2.h(510,1): message : see previous definition of 'SetConsoleTitleW'
+  ĐỒ ÁN.vcxproj -> C:\Users\LENOVO\source\repos\ĐỒ ÁN\Debug\ĐỒ ÁN.exe
