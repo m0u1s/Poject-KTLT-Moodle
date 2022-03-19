@@ -72,13 +72,13 @@ void BangDangKiLopHoc(int x, int y, int h, int w, int ythanhsang) {
 //Hàm liên quan đến giao diện chính
 bool checkendreg(date& start, date& end, date cur)
 {
-	if (cur.month > end.month || (cur.day == 1 && (cur.month == 9 || cur.month == 1 || cur.month == 5)))
+	if (cur.month > end.month || (cur.day == 1 && (cur.month == 9 || cur.month == 1 || cur.month == 5)) || cur.month < start.month)
 	{
 		return true;
 	}
 	else if (cur.month == end.month)
 	{
-		if (cur.day > end.day)
+		if (cur.day > end.day || cur.day < start.day)
 		{
 			return true;
 		}
