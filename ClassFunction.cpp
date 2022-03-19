@@ -1,5 +1,4 @@
 ﻿#include "MainFunction.h"
-using namespace std;
 //semester::method
 // các hàm đã hoàn thành của semester
 using namespace std;
@@ -331,9 +330,45 @@ void student::View_Class(string classname) {
 	filein.close();
 }
 //chưa hoàn thành 
-void student::register_course(fstream course_list, fstream& course_registered){
-	Modeptrai();
+void student::register_course(fstream& course_list, fstream& course_registered){
+	int ythanhsang = 6, y = 5, h = 1 ; 
+	system("cls");
+	while (true)
+	{
+		ShowCur(0);
+		BangDangKiLopHoc(35,y,h,50,ythanhsang);
+		if (_kbhit()) {
+			char c = _getch();
+			if (c == -32) {
+				c = _getch();
+				if (c == 80) {
+					if (ythanhsang == y + 2 * (h + 1) + 1) ythanhsang = y + 1;
+					else ythanhsang += 2;
+				}
+				else if (c == 72) {
+					if (ythanhsang == y + 1) ythanhsang = y + 2 * (h + 1) + 1;
+					else ythanhsang -= 2; 
+				}
+			}
+			else if (c == 13) {
+				system("cls");
+				if (ythanhsang == y + 1) {
+					Modeptrai();
+					// do shit here
+				}
+				else if (ythanhsang == y + (h + 1) + 1) {
+					Modeptrai();
+					//do shit here
+				}
+				else {
+					break;
+				}
+				system("cls");
+			}
+		}
+		ShowCur(0);
 	}
+}
 void student::courses_infomation(fstream course_registered){
 	Modeptrai();
 	}
@@ -433,184 +468,6 @@ void staff::create_class(YearCreated*& head)
 	fstream filein2;
 	string lop;
 	string path;
-	/*cin >> mainanswer;
-	if (mainanswer == "1")
-	{
-		cout << "If you want to comback, just type 0." << endl;
-		do
-		{
-			cout << "School year (ex: 2021-2022): ";
-			cin >> year;
-			if (FolderExists(year.c_str()) == false)
-			{
-				cout << "There is not this school year. Try again!" << endl;
-			}
-		} while (FolderExists(year.c_str()) == false && year != "0");
-		if (year != "0")
-		{
-			filein2.open(year + "\\class.txt", ios::out | ios::app);
-			char  answer;
-			do
-			{
-				cout << "Name of class: ";
-				cin >> lop;
-				if (lop == "0")break;
-				filein1.open(lop + ".txt", ios::in);
-				if (filein1.fail())
-				{
-					cout << "There is not this file class. Try again!" << endl;
-					answer = 'Y';
-					filein1.close();
-					continue;
-				}
-				else
-				{
-					filein1.close();
-					filein2 << lop << ",";
-				}
-				cout << "Complete! Do you want to continue ? (Y/N): ";
-				cin >> answer;
-			} while (answer == 'Y' || answer == 'y');
-			filein2.close();
-		}
-	}
-	else if (mainanswer == "2")
-	{
-		cout << endl;
-		cout << "If you want to comback, just type 0." << endl;
-		do
-		{
-			cout << "School year (ex: 2021-2022): ";
-			cin >> year;
-			if (FolderExists(year.c_str()) == false)
-			{
-				cout << "There is not this school year. Try again!" << endl;
-			}
-		} while (FolderExists(year.c_str()) == false && year != "0");
-		if (year != "0")
-		{
-			filein2.open(year + "\\class.txt", ios::out | ios::app);
-			char  answer;
-			do
-			{
-				cout << "Name of class: ";
-				cin >> lop;
-				if (lop == "0")break;
-				filein1.open(lop + ".txt", ios::in);
-				if (filein1.fail())
-				{
-					cout << "There is not this file class. Try again!" << endl;
-					answer = 'Y';
-					filein1.close();
-					continue;
-				}
-				else
-				{
-					filein1.close();
-					filein2 << lop << ",";
-				}
-				cout << "Complete! Do you want to continue ? (Y/N): ";
-				cin >> answer;
-			} while (answer == 'Y' || answer == 'y');
-			filein2.close();
-		}
-	}
-	else if (mainanswer == "3")
-	{
-		system("cls");
-		if (head == NULL)
-		{
-			cout << "Currently there is no schoolyear. So that there are not any class. Please create year, create class to continue." << endl;
-			cout << "ENTER TO CONTINUE" << endl;
-			system("pause");
-		}
-		else
-		{
-			string year1;
-			while (true)
-			{
-				system("cls");
-				OutputList(head);
-				cout << endl;
-				cout << "If you want to go back just type 0" << endl;
-				cout << "School year you want to see list class (ex 2021-2022): ";
-				cin >> year1;
-				if (year1 == "0")
-				{
-					break;
-				}
-				if (FolderExists(year1.c_str()))
-				{
-					if (is_emptyy(year1 + "\\class.txt"))
-					{
-						cout << "This school year has no class. please add more to view list class." << endl;
-						cout << "ENTER TO CONTINUE." << endl;
-						system("pause");
-					}
-					else
-					{
-						ifstream filein;
-						string a;
-						string answer;
-						string name;
-						Something* ClassInYear = NULL;
-						filein.open(year1 + "\\class.txt", ios::in);
-						while (!filein.eof())
-						{
-							getline(filein, a, ',');
-							Push1Something_Tail(ClassInYear, a);
-						}
-						filein.close();
-						while (true)
-						{
-							system("cls");
-							OutputListSomething(ClassInYear);
-							cout << "1. View the list student of class." << endl;
-							cout << "0. Go back." << endl;
-							cout << "Your answer: ";
-							cin >> answer;
-							if (answer == "1")
-							{
-								int check = 0;
-								while (check == 0)
-								{
-									cout << "Name of class: ";
-									cin >> name;
-									if (CheckNameClassInYear(ClassInYear, name))
-									{
-										cout << endl;
-										View_Class(name);
-										check = 1;
-										cout << "\n\nENTER TO CONTINUE." << endl;
-										system("pause");
-									}
-									else
-									{
-										cout << "There is not this class in this school year. Try again!" << endl;
-									}
-								}
-							}
-							else
-							{
-								break;
-							}
-						}
-						DeleteListSomething(ClassInYear);
-					}
-				}
-				else
-				{
-					cout << "There is not this school year. Create it or try again." << endl;
-					cout << "ENTER TO CONTINUE." << endl;
-					system("pause");
-				}
-			}
-		}
-	}
-	else
-	{
-		system("cls");
-	}*/
 	int ythanhsang = 6, y = 5, h = 1;
 	while (true) {
 		BangTaoLop(35, 5, 1, 50, ythanhsang);

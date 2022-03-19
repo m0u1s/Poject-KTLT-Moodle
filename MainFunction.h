@@ -36,6 +36,7 @@ void Create_Board(int x, int y, int h, int w);
 void Create_n_Board_Col(int n, int x, int y, int h, int w);
 void Create_n_Board_Row(int n, int x, int y, int h, int w);
 void BangTaoLop(int x, int y, int h, int w, int ythanhsang);
+void BangDangKiLopHoc(int x, int y, int h, int w, int ythanhsang);
 //Hàm liên quan đến hàm chính
 bool checkendreg(date& start, date& end, date cur);
 bool checkbeginreg(date& start, date& end, date cur);

@@ -99,7 +99,7 @@ public:
 	void output();
 	/*void class_list(fstream class_list);*/
 	void View_Class(string classname);
-	void register_course(fstream course_list, fstream& course_registered);
+	void register_course(fstream& course_list, fstream& course_registered);
 	void courses_infomation(fstream course_registered);
 	void delete_course(fstream& course_registered);
 	void view_registered_course(fstream course_registered);

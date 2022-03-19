@@ -64,6 +64,11 @@ void BangTaoLop(int x, int y, int h, int w, int ythanhsang) {
 	Create_Board_Content(x, y + 2 * (h + 1), 1, 50, "SEE LIST CLASS", ythanhsang);
 	Create_Board_Content(x, y + 3 * (h + 1), 1, 50, "GO BACK TO MENU", ythanhsang);
 }
+void BangDangKiLopHoc(int x, int y, int h, int w, int ythanhsang) {
+	Create_Board_Content(x, y, h, w, "REGIST COURSE", ythanhsang);
+	Create_Board_Content(x, y + h + 1, 1, 50, "VIEW REGISTED COURSE", ythanhsang);
+	Create_Board_Content(x, y + 2 * (h + 1), 1, 50, "GO BACK TO MENU", ythanhsang);
+}
 //Hàm liên quan đến giao diện chính
 bool checkendreg(date& start, date& end, date cur)
 {
@@ -710,6 +715,13 @@ void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path, s
 					cout << endl;
 					cout << "ENTER TO GO BACK MENU" << endl;
 					system("pause");
+					system("cls");
+				}
+				else if (ythanhsang == y + 3 * (h + 1) + 1) {
+					//
+					fstream course_registered, course_list;
+					a.register_course(course_list,course_registered);
+					//
 					system("cls");
 				}
 			}
