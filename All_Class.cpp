@@ -317,7 +317,58 @@ void staff::adjust_StudentGrades()
 void staff::read_ClassGrades()
 {
 }
-
+bool CheckYear(string Year)
+{
+    if (Year.length() != 9) return false;
+    int first = 0, second = 0;
+    int vt = 0;
+    while (vt < Year.length() && Year[vt] != '-')
+    {
+        first = first * 10 + Year[vt] - '0';
+        vt++;
+    }
+    vt++;
+    while (vt < Year.legnth())
+    {
+        second = second * 10 + Year[vt] - '0';
+        vt++;
+    }
+    if (second - first == 1) return true;
+    return false;
+}
+bool CheckClass(string Class)
+{
+    if (Class.length() != 7) return false;
+    if (Class[0] < 48 || Class[0] > 57 || Class[1] < 48 || Class[1] > 57)
+        return false;
+    int year = 0, vt = 0;
+    while (vt < 2)
+    {
+        year = Class[vt] - '0' + year * 10;
+        vt++;
+    }
+    string pr = "";
+    while (vt < 5)
+    {
+        pr = pr + Class[vt];
+        vt++;
+    }
+    if (pr != "clc" && pr != "CLC") return false;
+    int cs = 0;
+    while (vt < 9)
+    {
+        cs = Class[vt] - '0' + cs * 10;
+        vt++;
+    }
+    if (cs > 10 || cs < 1) return false;
+    return true;
+}
+bool CheckClass_Year(string Class, string Year)
+{
+    if ((!CheckClass(Class)) || (!CheckYear(Year))) return false;
+    if (Class[0] == Year[2] && Class[1] == Year[3]) return true;
+    return false;
+}
 int main()
 {
 
