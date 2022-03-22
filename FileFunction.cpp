@@ -67,3 +67,7 @@ bool checkBirth(string birth)
 	}
 	return true;
 }
+bool checkFileWithFstream(string path) {
+	ifstream isf(path);
+	return isf.good();
+}

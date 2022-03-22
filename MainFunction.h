@@ -11,7 +11,7 @@ void ShowCur(bool CursorVisibility);
 void resizeConsole(int width, int height);
 bool is_emptyy(string s);
 bool checkBirth(string birth);
-
+bool checkFileWithFstream(string path);
 YearCreated* MakeNodeCreateYear(string year);
 int CutYear(string year);
 void Push1CreatedYear_Tail(YearCreated*& head, string year);
@@ -33,6 +33,8 @@ void Create_Board(int x, int y, int h, int w);
 void Create_n_Board_Col(int n, int x, int y, int h, int w);
 void Create_n_Board_Row(int n, int x, int y, int h, int w);
 void BangTaoLop(int x, int y, int h, int w, int ythanhsang);
+void BangDangKiLopHoc(int x, int y, int h, int w, int ythanhsang);
+void CourseMenu(int x, int y, int h, int w, int ythanhsang);
 
 bool checkendreg(date& start, date& end, date cur);
 void Menu_SinhVien(int x, int y, int h, int w, int ythanhsang);

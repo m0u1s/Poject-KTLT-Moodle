@@ -1,0 +1,9 @@
+1,9,31,12
+5,9,20,9
+CSC10002,KTLT,4,60,Mon,2,Tue,3,I35,Do Thi Thu Ha
+BAA00005,KTDC,2,100,Fri,2,Sat,4,I36,Nguyen Thi Dong
+CSC10121,KNM,3,120,Mon,2,Tue,3,I37,Luong Vi Minh
+CSC00004,NMCNTT,5,50,Tue,2,Fri,3,I39,Tiet Gia Hong
+CSK00010,CTDL&GT,4,60,Thu,4,Fri,4,I40,Nguyen Hoang Kha
+CSC00090,VLDC,5,60,Mon,1,Mon,2,I50,Nguyen Thi Dong
+MTH00009,TRR,5,120,Mon,1,Mon,2,I89,Nguyen Kim Ngan

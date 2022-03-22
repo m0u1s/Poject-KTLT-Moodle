@@ -55,6 +55,18 @@ void BangTaoLop(int x, int y, int h, int w, int ythanhsang) {
 	Create_Board_Content(x, y + 2 * (h + 1), 1, 50, "SEE LIST CLASS", ythanhsang);
 	Create_Board_Content(x, y + 3 * (h + 1), 1, 50, "GO BACK TO MENU", ythanhsang);
 }
+void BangDangKiLopHoc(int x, int y, int h, int w, int ythanhsang) {
+	Create_Board_Content(x, y, h, w, "REGIST COURSE", ythanhsang);
+	Create_Board_Content(x, y + h + 1, 1, 50, "VIEW REGISTED COURSE", ythanhsang);
+	Create_Board_Content(x, y + 2 * (h + 1), 1, 50, "GO BACK TO MENU", ythanhsang);
+}
+void CourseMenu(int x, int y, int h, int w, int ythanhsang) {
+	Create_Board_Content(x, y, h, w, "CREATE COURSE", ythanhsang);
+	Create_Board_Content(x, y + 1 * (h + 1), h, w, "LIST COURSE", ythanhsang);
+	Create_Board_Content(x, y + 2 * (h + 1), h, w, "REMOVE COURSE", ythanhsang);
+	Create_Board_Content(x, y + 3 * (h + 1), h, w, "UPDATE COURSE", ythanhsang);
+	Create_Board_Content(x, y + 4 * (h + 1), h, w, "GO BACK TO MENU", ythanhsang);
+}
 //Hàm liên quan đến giao diện chính
 bool checkendreg(date& start, date& end, date cur)
 {
@@ -76,7 +88,7 @@ void Menu_SinhVien(int x, int y, int h, int w, int ythanhsang)
 	Create_Board_Content(x, y, h, w, "YOUR INFORMATION", ythanhsang);
 	Create_Board_Content(x, y + h + 1, h, w, "CHANGE PASSWORD", ythanhsang);
 	Create_Board_Content(x, y + 2 * (h + 1), h, w, "VIEW MEMBER IN YOUR CLASS", ythanhsang);
-	Create_Board_Content(x, y + 3 * (h + 1), h, w, "REGIST COURSE", ythanhsang);
+	Create_Board_Content(x, y + 3 * (h + 1), h, w, "REGISTER COURSE", ythanhsang);
 	Create_Board_Content(x, y + 4 * (h + 1), h, w, "SCORE COURSE", ythanhsang);
 	Create_Board_Content(x, y + 5 * (h + 1), h, w, "LOG OUT", ythanhsang);
 }
@@ -595,6 +607,19 @@ void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path, s
 {
 	student a;
 	a.input_file(path);
+	/*if (checkFileWithFstream("sinhvien//" + a.getID() + "//" + currentsemester.SchoolYear + "_" + currentsemester.name + ".txt"))
+	{
+		if (is_emptyy("sinhvien//" + a.getID() + "//" + currentsemester.SchoolYear + "_" + currentsemester.name + ".txt") == false)
+		{
+			ifstream fileinn;
+			fileinn.open("sinhvien//" + a.getID() + "//" + currentsemester.SchoolYear + "_" + currentsemester.name + ".txt", ios::in);
+			while (!fileinn.eof())
+			{
+				Push1Something_Tail(a.RegistedCourse, )
+			}
+		}
+	}*/
+	a.InputRegCoursetoList_file(currentsemester);
 	bool checkchange = false;
 	while (true)
 	{
@@ -693,15 +718,15 @@ void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path, s
 				else if (ythanhsang == y + 3*(h + 1) +1)
 				{
 					system("cls");
-					if (currentsemester.CheckEndReg == false)
+					/*if (currentsemester.CheckEndReg == false)
 					{
 						currentsemester.BangDanhSachCourse();
 					}
 					else
 					{
 						cout << "It doesn't begin or the registration ended." << endl;
-					}
-					system("pause");
+					}*/
+					a.register_course(currentsemester);
 					system("cls");
 				}
 			}
@@ -819,8 +844,7 @@ void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path, sem
 				else if (ythanhsang == y + 5 * (h + 1) + 1)
 				{
 					system("cls");
-					semester *tem = &currentsemester;
-					b.create_course(tem);
+					b.create_course(currentsemester);
 					system("cls");
 				}
 				else if (ythanhsang == y + 6 * (h + 1) + 1)
