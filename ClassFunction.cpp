@@ -990,24 +990,69 @@ void staff::create_course(semester &a) {
 								{
 									string courseName, courseID;
 									cin.ignore();
-									cout << "Enter course name: ";
-									getline(cin, courseName);
 									cout << "Enter course ID: ";
 									getline(cin, courseID);
+									cout << "Enter course name: ";
+									getline(cin, courseName);
 									Course* courseCheck = nullptr;
 									for (courseCheck = a.CreatedCourse; courseCheck != nullptr; courseCheck = courseCheck->pnext)
 									{
 										if (courseCheck->Course_Code == courseID && courseCheck->Course_Name == courseName)
 										{
-											cout << courseCheck->Course_Code << " - " << courseCheck->Course_Name << " - " << courseCheck->Teacher << endl;
-											cout << courseCheck->CurNumStudent << endl;
+											system("cls");
+											cout << courseCheck->Course_Code << " - " << courseCheck->Course_Name << " - " << courseCheck->Teacher << endl << endl;
+											cout << "Current Student Number: " << courseCheck->CurNumStudent << endl;
+											if (courseCheck->CurNumStudent > 0)
+											{
+												cout << setfill('_');
+												cout << setw(71) << "_" << endl;
+												cout << setfill(' ');
+												cout << setw(10) << left << "|STT";
+												cout << setw(10) << left << "|ID";
+												cout << setw(30) << left << "|Name";
+												cout << setw(20) << left << "|Class";
+												cout << setw(1) << "|" << endl;
+												cout << setw(1) << "|";
+												cout << setfill('-');
+												cout << setw(9) << "-";
+												cout << setw(1) << "|";
+												cout << setw(9) << "-";
+												cout << setw(1) << "|";
+												cout << setw(29) << "-";
+												cout << setw(1) << "|";
+												cout << setw(19) << "-";
+												cout << setw(1) << "|" << endl;
+												cout << setfill(' ');
+												int i = 0;
+												for (tempStudent* stu = courseCheck->headStudent; stu != nullptr; stu = stu->pnext)
+												{
+													i++;
+													cout << "|" << setw(9) << left << i;
+													cout << "|" << setw(9) << left << stu->ID;
+													cout << "|" << setw(29) << left << stu->name;
+													cout << "|" << setw(19) << left << stu->Class;
+													cout << setw(1) << left << "|" << endl;
+												}
+												cout << setw(1) << "|";
+												cout << setfill('_');
+												cout << setw(9) << "_";
+												cout << setw(1) << "|";
+												cout << setw(9) << "_";
+												cout << setw(1) << "|";
+												cout << setw(29) << "_";
+												cout << setw(1) << "|";
+												cout << setw(19) << "_";
+												cout << setw(1) << "|" << endl << endl;
+											}
+											else
+												cout << "There is no student in this course" << endl << endl;
 											system("pause");
 											break;
 										}
 									}
 									if (courseCheck == nullptr)
 									{
-										cout << "No course have name or ID like that" << endl;
+										cout << "No course has name or ID like that" << endl;
 										system("pause");
 									}
 								}
