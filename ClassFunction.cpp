@@ -988,8 +988,28 @@ void staff::create_course(semester &a) {
 								cin >> answer;
 								if (answer == "1")
 								{
-									cout << "View list" << endl;
-									system("pause");
+									string courseName, courseID;
+									cin.ignore();
+									cout << "Enter course name: ";
+									getline(cin, courseName);
+									cout << "Enter course ID: ";
+									getline(cin, courseID);
+									Course* courseCheck = nullptr;
+									for (courseCheck = a.CreatedCourse; courseCheck != nullptr; courseCheck = courseCheck->pnext)
+									{
+										if (courseCheck->Course_Code == courseID && courseCheck->Course_Name == courseName)
+										{
+											cout << courseCheck->Course_Code << " - " << courseCheck->Course_Name << " - " << courseCheck->Teacher << endl;
+											cout << courseCheck->CurNumStudent << endl;
+											system("pause");
+											break;
+										}
+									}
+									if (courseCheck == nullptr)
+									{
+										cout << "No course have name or ID like that" << endl;
+										system("pause");
+									}
 								}
 								else
 								{
