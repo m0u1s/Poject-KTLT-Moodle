@@ -1,4 +1,27 @@
 ﻿#include "MainFunction.h"
+void DeletetempStudent(tempStudent*& head, string &IDstudent)
+{
+	tempStudent* pCur = head;
+	for (tempStudent* i = head; i != NULL; i=i->pnext)
+	{
+		if (i->ID == IDstudent)
+		{
+			if (i == head)
+			{
+				head = head->pnext;
+				delete i;
+				break;
+			}
+			else
+			{
+				pCur->pnext = i->pnext;
+				delete i;
+				break;
+			}
+		}
+		pCur = i;
+	}
+}
 void semester::PushTailCourse(Course*& a) // tham số là một course đã sao chép đầy đủ thông tin, các hs trong course từ file txt bây giờ thêm vào cuối danh sách liên kết CreatedCourse
 {
 	if (CreatedCourse == NULL)
@@ -165,6 +188,7 @@ void semester::InsertCourse(Course*& a)
 }
 void semester::BangDanhSachCourse()
 {
+	cout << "\t\t\t\t(1) 7h30   (2) 9h30   (3) 13h30   (4) 15h30" << endl << endl;
 	cout << setw(11) << left << "  ID";
 	cout << setw(14) << left << "Course_name";		// độ rộng 5 ký tự, canh trái ID
 	cout << setw(9) << left << "Credit";	// độ rộng 30 ký tự, canh trái Name
@@ -230,6 +254,7 @@ semester::~semester()
 		delete temppcourse;
 	}
 }
+//
 string person::getpassword() {
 	return password;
 }
@@ -303,6 +328,7 @@ void person::output() {
 //chưa hoàn thành
 void person::edit_profile() {
 }
+//
 void student::savefile(string path) {
 	ofstream fileout;
 	fileout.open(path, ios::out);
@@ -376,27 +402,69 @@ void student::View_Class(string classname) {
 	}
 	filein.close();
 }
-//chưa hoàn thành 
-//void student::PushRegCoursetoList(string CourseID, semester*& a)
-//{
-//	Push1Something_Tail(RegistedCourse, CourseID);
-//	ofstream fileout;
-//	if (is_emptyy("sinhvien//" + ID + "//" + a->SchoolYear + "_" + a->name + ".txt"))
-//	{
-//		fileout.open("sinhvien//" + ID + "//" + a->SchoolYear + "_" + a->name + ".txt", ios::out);
-//		fileout << CourseID;
-//		fileout.close();
-//	}
-//	else
-//	{
-//		fileout.open("sinhvien//" + ID + "//" + a->SchoolYear + "_" + a->name + ".txt", ios::out | ios::app);
-//		fileout << endl;
-//		fileout << CourseID;
-//		fileout.close();
-//	}
-//	NumCourse++;
-//
-//}
+void student::InsertRegCoursetoList(string &CourseID, semester& a)
+{
+	ofstream fileout;
+	if (is_emptyy("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + ".txt"))
+	{
+		fileout.open("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + ".txt", ios::out);
+		fileout << CourseID;
+		fileout.close();
+	}
+	else
+	{
+		fileout.open("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + ".txt", ios::out | ios::app);
+		fileout << endl;
+		fileout << CourseID;
+		fileout.close();
+	}
+	for (Course* i = a.CreatedCourse; i != NULL; i=i->pnext)
+	{
+		if (i->Course_Code == CourseID)
+		{
+			fileout.open(a.SchoolYear + "//" + CourseID + "_" + i->Course_Name + "_" + a.name + ".txt", ios::out | ios::app);
+			if (is_emptyy(a.SchoolYear + "//" + CourseID + "_" + i->Course_Name + "_" + a.name + ".txt"))
+			{
+				fileout << CLASS << "," << name << "," << ID;
+				fileout.close();
+			}
+			else
+			{
+				fileout << endl;
+				fileout << CLASS << "," << name << "," << ID;
+				fileout.close();
+			}
+			Course_Result* tempp = new Course_Result;
+			tempp->Course_Code = CourseID;
+			tempp->Course_Name = i->Course_Name;
+			tempp->credits = i->credits;
+			tempp->CurNumStudent = i->CurNumStudent;
+			tempp->Maxstudent = i->Maxstudent;
+			tempp->Room = i->Room;
+			tempp->Teacher = i->Teacher;
+			tempp->Weekday1 = i->Weekday1;
+			tempp->Weekday2 = i->Weekday2;
+			tempp->shift1 = i->shift1;
+			tempp->shift2 = i->shift2;
+			if (RegistedCoursee == NULL)
+			{
+				RegistedCoursee = tempp;
+			}
+			else
+			{
+				Course_Result* pCur = RegistedCoursee;
+				while (pCur->pnext1 != NULL)
+				{
+					pCur = pCur->pnext1;
+				}
+				pCur->pnext1 = tempp;
+			}
+			i->CurNumStudent++;
+			tempp->CurNumStudent++;
+		}
+	}
+	NumCourse++;
+}
 void student::InputRegCoursetoList_file(semester & a)
 {
 	if (checkFileWithFstream("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + ".txt"))
@@ -404,12 +472,44 @@ void student::InputRegCoursetoList_file(semester & a)
 		if (is_emptyy("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + ".txt") == false)
 		{
 			ifstream fileinn;
+			Course_Result* tempp;
 			fileinn.open("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + ".txt", ios::in);
 			while (!fileinn.eof())
 			{
 				string s;
 				fileinn >> s;
-				Push1Something_Tail(RegistedCourse, s);
+				tempp = new Course_Result;
+				for (Course* i = a.CreatedCourse; i != NULL; i=i->pnext)
+				{
+					if (i->Course_Code == s)
+					{
+						tempp->Course_Code = s;
+						tempp->Course_Name = i->Course_Name;
+						tempp->credits = i->credits;
+						tempp->CurNumStudent = i->CurNumStudent;
+						tempp->Maxstudent = i->Maxstudent;
+						tempp->Room = i->Room;
+						tempp->Teacher = i->Teacher;
+						tempp->Weekday1 = i->Weekday1;
+						tempp->Weekday2 = i->Weekday2;
+						tempp->shift1 = i->shift1;
+						tempp->shift2 = i->shift2;
+						if (RegistedCoursee == NULL)
+						{
+							RegistedCoursee = tempp;
+						}
+						else
+						{
+							Course_Result* pCur = RegistedCoursee;
+							while (pCur->pnext1 != NULL)
+							{
+								pCur = pCur->pnext1;
+							}
+							pCur->pnext1 = tempp;
+						}
+						break;
+					}
+				}
 			}
 			fileinn.close();
 		}
@@ -422,7 +522,7 @@ void student::InputRegCoursetoList_file(semester & a)
 	}
 }
 void student::register_course(semester &a) {
-	int ythanhsang = 6, y = 5, h = 1;
+	int ythanhsang = 8, y = 7, h = 1;
 	system("cls");
 	while (true)
 	{
@@ -444,107 +544,46 @@ void student::register_course(semester &a) {
 			else if (c == 13) {
 				system("cls");
 				if (ythanhsang == y + 1) {
-					cout << "\t\t\t\t(1) 7h30   (2) 9h30   (3) 13h30   (4) 15h30" << endl;
-					cout << "\t\t\t\tCourse you did not register" << endl;
-					cout << setw(11) << left << "  ID";
-					cout << setw(14) << left << "Course_name";		// độ rộng 5 ký tự, canh trái ID
-					cout << setw(9) << left << "Credit";	// độ rộng 30 ký tự, canh trái Name
-					cout << setw(6) << left << "Max";	// độ rộng 20 ký tự, canh phải Address
-					cout << setw(12) << left << "Session 1";
-					cout << setw(12) << left << "Session 2";
-					cout << setw(27) << left << "Teacher";
-					cout << setw(7) << left << "Room";
-					cout << setw(6) << left << "Current student" << endl;
-					cout << setfill('-');		// set fill bằng ký tự '-' thay vì ' '
-					cout << setw(112) << "-" << endl;	// fill 55 ký tự '-'
-					cout << setfill(' ');
-					string shift1, shift2, session1, session2; bool check = true;
-					
-						for (Course* j = a.CreatedCourse; j != NULL; j = j->pnext)
+					string answer;
+					while (true)
+					{
+						system("cls");
+						view_notregistered_course(a);
+						view_registered_course(a);
+						cout << "1. Register Course." << endl;
+						cout << "2. Delete Course." << endl;
+						cout << "0. Go back." << endl << endl;
+						cout << "Your Choice: ";
+						cin >> answer;
+						if (answer == "1")
 						{
-							check = true;
-							for (Something* i = RegistedCourse; i != NULL; i = i->pnext)
-							{
-								if (i->a == j->Course_Code)
-								{
-									check = false;
-									break;
-								}
-							}
-							if (check)
-							{
-								shift1 = to_string(j->shift1);
-								shift2 = to_string(j->shift2);
-								session1 = j->Weekday1 + " (" + shift1 + ")";
-								session2 = j->Weekday2 + " (" + shift2 + ")";
-								cout << setw(11) << left << j->Course_Code;
-								cout << setw(14) << left << j->Course_Name;		// độ rộng 5 ký tự, canh trái ID
-								cout << setw(9) << left << j->credits;	// độ rộng 30 ký tự, canh trái Name
-								cout << setw(6) << left << j->Maxstudent;	// độ rộng 20 ký tự, canh phải Address
-								cout << setw(12) << left << session1;
-								cout << setw(12) << left << session2;
-								cout << setw(27) << left << j->Teacher;
-								cout << setw(10) << left << j->Room;
-								cout << setw(6) << left << j->CurNumStudent << endl;
-							}
+							string CourseID;
+							cout << "ID of Course you want to register :";
+							cin >> CourseID;
+							InsertRegCoursetoList(CourseID, a);
 						}
-						cout << endl;
-						cout << "\t\t\t\tCourse you registered" << endl;
-						cout << setw(11) << left << "  ID";
-						cout << setw(14) << left << "Course_name";		// độ rộng 5 ký tự, canh trái ID
-						cout << setw(9) << left << "Credit";	// độ rộng 30 ký tự, canh trái Name
-						cout << setw(6) << left << "Max";	// độ rộng 20 ký tự, canh phải Address
-						cout << setw(12) << left << "Session 1";
-						cout << setw(12) << left << "Session 2";
-						cout << setw(27) << left << "Teacher";
-						cout << setw(7) << left << "Room";
-						cout << setw(6) << left << "Current student" << endl;
-						cout << setfill('-');		// set fill bằng ký tự '-' thay vì ' '
-						cout << setw(112) << "-" << endl;	// fill 55 ký tự '-'
-						cout << setfill(' ');
-						for (Something* i = RegistedCourse; i != NULL; i = i->pnext)
+						else if (answer == "2")
 						{
-							for (Course* j = a.CreatedCourse; j != NULL; j = j->pnext)
-							{
-								if (i->a == j->Course_Code)
-								{
-									shift1 = to_string(j->shift1);
-									shift2 = to_string(j->shift2);
-									session1 = j->Weekday1 + " (" + shift1 + ")";
-									session2 = j->Weekday2 + " (" + shift2 + ")";
-									cout << setw(11) << left << j->Course_Code;
-									cout << setw(14) << left << j->Course_Name;		// độ rộng 5 ký tự, canh trái ID
-									cout << setw(9) << left << j->credits;	// độ rộng 30 ký tự, canh trái Name
-									cout << setw(6) << left << j->Maxstudent;	// độ rộng 20 ký tự, canh phải Address
-									cout << setw(12) << left << session1;
-									cout << setw(12) << left << session2;
-									cout << setw(27) << left << j->Teacher;
-									cout << setw(10) << left << j->Room;
-									cout << setw(6) << left << j->CurNumStudent << endl;
-									break;
-								}
-							}
+							string CourseID;
+							cout << "ID of Course you want to register :";
+							cin >> CourseID;
+							delete_course(CourseID, a);
 						}
-						system("pause");
+						else
+						{
+							break;
+						}
+					}
 				}
 				else if (ythanhsang == y + (h + 1) + 1) {
-					if (RegistedCourse == NULL)
+					if (RegistedCoursee == NULL)
 					{
 						cout << "You did not regist to any course" << endl;
 					}
 					else
 					{
-						for (Something* i = RegistedCourse; i != NULL; i = i->pnext)
-						{
-							for (Course* j = a.CreatedCourse; j != NULL; j = j->pnext)
-							{
-								if (i->a == j->Course_Code)
-								{
-									cout << j->Course_Name << " " << j->Teacher << endl;
-									break;
-								}
-							}
-						}
+						cout << "\t\t\t\t(1) 7h30   (2) 9h30   (3) 13h30   (4) 15h30" << endl << endl;
+						view_registered_course(a);
 					}
 					system("pause");
 				}
@@ -559,17 +598,178 @@ void student::register_course(semester &a) {
 }
 void student::courses_infomation(fstream course_registered) {
 }
-void student::delete_course(fstream& course_registered) {
+void student::delete_course(string &CourseID,semester &a) {
+	Course_Result* pCur = RegistedCoursee;
+	for (Course_Result* i = RegistedCoursee; i != NULL; i=i->pnext1)
+	{
+		if (i->Course_Code == CourseID)
+		{
+			if (i == RegistedCoursee)
+			{
+				RegistedCoursee = RegistedCoursee->pnext1;
+				delete i;
+			}
+			else
+			{
+				pCur->pnext1 = i->pnext1;
+				delete i;
+			}
+			ofstream fileout;
+			fileout.open("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + ".txt", ios::out);
+			for (Course_Result* j = RegistedCoursee; j != NULL; j=j->pnext1)
+			{
+				if (j->pnext1 != NULL)
+				{
+					fileout << j->Course_Code << endl;
+				}
+				else
+				{
+					fileout << j->Course_Code;
+				}
+			}
+			fileout.close();
+			for (Course* k = a.CreatedCourse; k != NULL; k=k->pnext)
+			{
+				if (k->Course_Code == CourseID)
+				{
+					fileout.open(a.SchoolYear + "//" + k->Course_Code + "_" + k->Course_Name + "_" + a.name + ".txt", ios::out);
+					tempStudent* pCur = k->headStudent;
+					tempStudent* n = k->headStudent;
+					while(n!=NULL)
+					{
+						if (n->ID == ID)
+						{
+							if (n == k->headStudent)
+							{
+								k->headStudent = k->headStudent->pnext;
+								delete n;
+								n = k->headStudent;
+							}
+							else
+							{
+								pCur->pnext = n->pnext;
+								delete n;
+								n = pCur->pnext;
+							}
+						}
+						else
+						{
+							if (n->pnext != NULL)
+							{
+								fileout << n->Class << "," << n->name << "," << n->ID << endl;
+							}
+							else
+							{
+								fileout << n->Class << "," << n->name << "," << n->ID;
+							}
+							pCur = n;
+							n = n->pnext;
+						}
+					}
+					k->CurNumStudent--;
+					break;
+				}
+			}
+			break;
+		}
+		pCur = i;
+	}
 }
-void student::view_registered_course(fstream course_registered) {
+void student::view_registered_course(semester &a) {
+	cout << endl;
+	string shift1, shift2, session1, session2;
+	cout << "\t\t\t\t\tCourse you registered" << endl;
+	cout << setw(11) << left << "  ID";
+	cout << setw(14) << left << "Course_name";		// độ rộng 5 ký tự, canh trái ID
+	cout << setw(9) << left << "Credit";	// độ rộng 30 ký tự, canh trái Name
+	cout << setw(6) << left << "Max";	// độ rộng 20 ký tự, canh phải Address
+	cout << setw(12) << left << "Session 1";
+	cout << setw(12) << left << "Session 2";
+	cout << setw(27) << left << "Teacher";
+	cout << setw(7) << left << "Room";
+	cout << setw(6) << left << "Current student" << endl;
+	cout << setfill('-');		// set fill bằng ký tự '-' thay vì ' '
+	cout << setw(112) << "-" << endl;	// fill 55 ký tự '-'
+	cout << setfill(' ');
+		for (Course_Result* j = RegistedCoursee; j != NULL; j = j->pnext1)
+		{
+				shift1 = to_string(j->shift1);
+				shift2 = to_string(j->shift2);
+				session1 = j->Weekday1 + " (" + shift1 + ")";
+				session2 = j->Weekday2 + " (" + shift2 + ")";
+				cout << setw(11) << left << j->Course_Code;
+				cout << setw(14) << left << j->Course_Name;		// độ rộng 5 ký tự, canh trái ID
+				cout << setw(9) << left << j->credits;	// độ rộng 30 ký tự, canh trái Name
+				cout << setw(6) << left << j->Maxstudent;	// độ rộng 20 ký tự, canh phải Address
+				cout << setw(12) << left << session1;
+				cout << setw(12) << left << session2;
+				cout << setw(27) << left << j->Teacher;
+				cout << setw(10) << left << j->Room;
+				cout << setw(6) << left << j->CurNumStudent << endl;
+		}
+	cout << endl << endl;
+}
+void student::view_notregistered_course(semester& a)
+{
+	cout << "\t\t\t\t(1) 7h30   (2) 9h30   (3) 13h30   (4) 15h30" << endl << endl;
+	cout << "\t\t\t\t\tCourse you did not register" << endl;
+	cout << setw(11) << left << "  ID";
+	cout << setw(14) << left << "Course_name";		// độ rộng 5 ký tự, canh trái ID
+	cout << setw(9) << left << "Credit";	// độ rộng 30 ký tự, canh trái Name
+	cout << setw(6) << left << "Max";	// độ rộng 20 ký tự, canh phải Address
+	cout << setw(12) << left << "Session 1";
+	cout << setw(12) << left << "Session 2";
+	cout << setw(27) << left << "Teacher";
+	cout << setw(7) << left << "Room";
+	cout << setw(6) << left << "Current student" << endl;
+	cout << setfill('-');		// set fill bằng ký tự '-' thay vì ' '
+	cout << setw(112) << "-" << endl;	// fill 55 ký tự '-'
+	cout << setfill(' ');
+	string shift1, shift2, session1, session2; bool check;
+
+	for (Course* j = a.CreatedCourse; j != NULL; j = j->pnext)
+	{
+		check = true;
+		for (Course_Result* i = RegistedCoursee; i != NULL; i = i->pnext1)
+		{
+			if (i->Course_Code == j->Course_Code)
+			{
+				check = false;
+				break;
+			}
+		}
+		if (check)
+		{
+			shift1 = to_string(j->shift1);
+			shift2 = to_string(j->shift2);
+			session1 = j->Weekday1 + " (" + shift1 + ")";
+			session2 = j->Weekday2 + " (" + shift2 + ")";
+			cout << setw(11) << left << j->Course_Code;
+			cout << setw(14) << left << j->Course_Name;		// độ rộng 5 ký tự, canh trái ID
+			cout << setw(9) << left << j->credits;	// độ rộng 30 ký tự, canh trái Name
+			cout << setw(6) << left << j->Maxstudent;	// độ rộng 20 ký tự, canh phải Address
+			cout << setw(12) << left << session1;
+			cout << setw(12) << left << session2;
+			cout << setw(27) << left << j->Teacher;
+			cout << setw(10) << left << j->Room;
+			cout << setw(6) << left << j->CurNumStudent << endl;
+		}
+	}
 }
 void student::view_course_member(fstream course_registered) {
 }
 student::~student()
 {
-	DeleteListSomething(RegistedCourse);
+	Course_Result* tempp;
+	while (RegistedCoursee != NULL)
+	{
+		tempp = RegistedCoursee;
+		RegistedCoursee = RegistedCoursee->pnext1;
+		delete tempp;
+	}
 	int NumCourse = 0;
 }
+//
 void staff::savefile(string path)
 {
 	ofstream fileout;

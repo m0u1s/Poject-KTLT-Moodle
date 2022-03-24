@@ -32,8 +32,9 @@ struct tempStudent
 	string Class;
 	tempStudent* pnext = NULL;
 };
-struct Course
+class Course
 {
+public:
 	string Course_Code;
 	string Course_Name;
 	short credits;
@@ -47,6 +48,15 @@ struct Course
 	string Room;
 	tempStudent* headStudent = NULL;// danh sách liên kết student trong course;
 	Course* pnext = NULL; // liên kết với phần tử course tiếp theo
+};
+class Course_Result : public Course
+{
+public:
+	float midTerm_point;
+	float endTerm_point;
+	float other_point;
+	float final_grade;
+	Course_Result* pnext1 = NULL;
 };
 //class
 class semester {
@@ -96,8 +106,8 @@ class student : public person {
 private:
 	string CLASS;
 public:
-	Something* RegistedCourse = NULL;
 	int NumCourse = 0;
+	Course_Result* RegistedCoursee = NULL;
 	/*void PushRegCoursetoList(string CourseID, semester*& a);*/
 	void InputRegCoursetoList_file(semester &a);
 	void savefile(string path);
@@ -110,8 +120,10 @@ public:
 	void View_Class(string classname);
 	void register_course(semester &a);
 	void courses_infomation(fstream course_registered);
-	void delete_course(fstream& course_registered);
-	void view_registered_course(fstream course_registered);
+	void delete_course(string& CourseID,semester &a);
+	void view_registered_course(semester &a);
+	void view_notregistered_course(semester& a);
+	void InsertRegCoursetoList(string &CourseID, semester& a);
 	void view_course_member(fstream course_registered);
 	~student();
 
