@@ -1,4 +1,25 @@
 ﻿  ClassFunction.cpp
-C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\MainFunction.h(11,2): warning C4273: 'SetConsoleTitleW': inconsistent dll linkage
+C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\MainFunction.h(8,2): warning C4273: 'SetConsoleTitleW': inconsistent dll linkage
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\consoleapi2.h(510,1): message : see previous definition of 'SetConsoleTitleW'
+  DisplayFunction.cpp
+C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\MainFunction.h(8,2): warning C4273: 'SetConsoleTitleW': inconsistent dll linkage
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\consoleapi2.h(510,1): message : see previous definition of 'SetConsoleTitleW'
+  FileFunction.cpp
+C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\MainFunction.h(8,2): warning C4273: 'SetConsoleTitleW': inconsistent dll linkage
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\consoleapi2.h(510,1): message : see previous definition of 'SetConsoleTitleW'
+C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\FileFunction.cpp(16,26): warning C4838: conversion from 'int' to 'SHORT' requires a narrowing conversion
+C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\FileFunction.cpp(16,29): warning C4838: conversion from 'int' to 'SHORT' requires a narrowing conversion
+C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\FileFunction.cpp(61,20): warning C4018: '<': signed/unsigned mismatch
+  SomethingFunction.cpp
+C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\MainFunction.h(8,2): warning C4273: 'SetConsoleTitleW': inconsistent dll linkage
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\consoleapi2.h(510,1): message : see previous definition of 'SetConsoleTitleW'
+  YearFunction.cpp
+C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\MainFunction.h(8,2): warning C4273: 'SetConsoleTitleW': inconsistent dll linkage
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\consoleapi2.h(510,1): message : see previous definition of 'SetConsoleTitleW'
+C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\YearFunction.cpp(14,20): warning C4018: '<': signed/unsigned mismatch
+  main.cpp
+C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\MainFunction.h(8,2): warning C4273: 'SetConsoleTitleW': inconsistent dll linkage
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\consoleapi2.h(510,1): message : see previous definition of 'SetConsoleTitleW'
+  Generating Code...
+C:\Users\LENOVO\source\repos\ĐỒ ÁN\ĐỒ ÁN\YearFunction.cpp(21): warning C4715: 'CutYear': not all control paths return a value
   ĐỒ ÁN.vcxproj -> C:\Users\LENOVO\source\repos\ĐỒ ÁN\Debug\ĐỒ ÁN.exe
