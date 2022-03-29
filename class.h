@@ -16,11 +16,6 @@ struct Something
 	Something* pnext;
 	Something* prev;
 };
-struct YearCreated {
-	string year;
-	YearCreated* pnext;
-	YearCreated* ppre;
-};
 struct date
 {
 	short day, month;
@@ -68,7 +63,10 @@ public:
 	date StartRegCourse;
 	date EndRegCourse;
 	bool CheckEndReg = false;
+	bool checkEndSemester = false;
 	Course* CreatedCourse = NULL;
+	void checkendreg(const date& cur);
+	void checkendsemester(const date& cur);
 	void PushTailCourse(Course*& a);
 	void PushTailStudent(Course*& a, tempStudent*& b);
 	void filein_Cur(date& currentday);
@@ -100,7 +98,6 @@ public:
 	void input_file(string path);
 	void input();
 	void output();
-	void edit_profile();
 };
 class student : public person {
 private:
@@ -108,15 +105,13 @@ private:
 public:
 	int NumCourse = 0;
 	Course_Result* RegistedCoursee = NULL;
-	/*void PushRegCoursetoList(string CourseID, semester*& a);*/
+	bool CheckCourse(string CourseID, semester& a);
 	void InputRegCoursetoList_file(semester &a);
 	void savefile(string path);
 	string getclass();
 	void input();
 	void input_file(string path);
-	void input_file2(ifstream& filein);
 	void output();
-	/*void class_list(fstream class_list);*/
 	void View_Class(string classname);
 	void register_course(semester &a);
 	void courses_infomation(fstream course_registered);
@@ -124,6 +119,7 @@ public:
 	void view_registered_course(semester &a);
 	void view_notregistered_course(semester& a);
 	void InsertRegCoursetoList(string &CourseID, semester& a);
+	void View_Score(semester &a);
 	void view_course_member(fstream course_registered);
 	~student();
 
@@ -133,21 +129,19 @@ private:
 class staff : public person {
 public:
 	void savefile(string path);
-
-	// When a semester start
-	// idea for a semester that we have a file name 2021-2022 then inside we have classes,...
-	void create_schoolyear(YearCreated*& head, const date& currentday);
+	void create_schoolyear(Something*& headYear, const date& currentday);
 	void add_student();
 	void View_Class(string classname);
-	void create_class(YearCreated*& head);
+	void create_class(Something*& head);
 	void create_course(semester & a);
 	void create_semester(semester& currentsemester, date& currentday);
 	void adjust_Courses(semester& a);
 	void delete_course(semester& a);
-	// End of regis time
-	/*void read_Classlist();*/
+	void Score(semester &a);
+	void create_FileScoreboard(semester &a);
+	void view_ScoreCourse(string &CourseID, semester& a);
+	void update_ScoreStudent(semester& a);
 	void read_studentList();
-	// End of semester
 	void output_Course_Student();
 	void adjust_StudentGrades();
 	void read_ClassGrades();

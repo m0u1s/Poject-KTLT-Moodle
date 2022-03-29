@@ -22,7 +22,35 @@ void DeletetempStudent(tempStudent*& head, string &IDstudent)
 		pCur = i;
 	}
 }
-void semester::PushTailCourse(Course*& a) // tham số là một course đã sao chép đầy đủ thông tin, các hs trong course từ file txt bây giờ thêm vào cuối danh sách liên kết CreatedCourse
+void semester::checkendreg(const date& cur)
+{
+	if (cur.month > EndRegCourse.month || (cur.day == 1 && (cur.month == 9 || cur.month == 1 || cur.month == 5)) || cur.month < StartRegCourse.month)
+	{
+		CheckEndReg = true;
+	}
+	else if (cur.month == EndRegCourse.month)
+	{
+		if (cur.day > EndRegCourse.day || cur.day < StartRegCourse.day)
+		{
+			CheckEndReg = true;
+		}
+	}
+}
+void semester::checkendsemester(const date& cur)
+{
+	if (cur.month > end.month || (cur.day == 1 && (cur.month == 9 || cur.month == 1 || cur.month == 5)) || cur.month < start.month)
+	{
+		checkEndSemester = true;
+	}
+	else if (cur.month == end.month)
+	{
+		if (cur.day > end.day)
+		{
+			checkEndSemester = true;
+		}
+	}
+}
+void semester::PushTailCourse(Course*& a) 
 {
 	if (CreatedCourse == NULL)
 	{
@@ -199,21 +227,16 @@ void semester::BangDanhSachCourse()
 	cout << setw(7) << left << "Room";
 	cout << setw(6) << left << "Current student" << endl;
 	cout << setfill('-');		// set fill bằng ký tự '-' thay vì ' '
-	cout << setw(112) << "-" << endl;	// fill 55 ký tự '-'
+	cout << setw(115) << "-" << endl;	// fill 55 ký tự '-'
 	cout << setfill(' ');
-	string shift1, shift2, session1, session2;
 	for (Course* i = CreatedCourse; i != NULL; i=i->pnext)
 	{
-		shift1 = to_string(i->shift1);
-		shift2 = to_string(i->shift2);
-		session1 = i->Weekday1 + " (" + shift1 + ")";
-		session2 = i->Weekday2 + " (" + shift2 + ")";
 		cout << setw(11) << left << i->Course_Code;
 		cout << setw(14) << left << i->Course_Name;		// độ rộng 5 ký tự, canh trái ID
 		cout << setw(9) << left << i->credits;	// độ rộng 30 ký tự, canh trái Name
 		cout << setw(6) << left << i->Maxstudent;	// độ rộng 20 ký tự, canh phải Address
-		cout << setw(12) << left << session1;
-		cout << setw(12) << left << session2;
+		cout << setw(12) << left << i->Weekday1 + " (" + to_string(i->shift1) + ")";
+		cout << setw(12) << left << i->Weekday2 + " (" + to_string(i->shift2) + ")";
 		cout << setw(27) << left << i->Teacher;
 		cout << setw(10) << left << i->Room;
 		cout << setw(6) << left << i->CurNumStudent << endl;
@@ -325,10 +348,60 @@ void person::output() {
 	gotoxy(45, 21); cout << "ESC TO GO BACK. ";
 	Setcolor(0, 7);
 }
-//chưa hoàn thành
-void person::edit_profile() {
-}
 //
+bool student::CheckCourse(string CourseID, semester& a)
+{
+	Course* Cur = a.CreatedCourse;
+	bool check = false;
+	while (Cur != NULL) {
+		if (Cur->Course_Code == CourseID) {
+			check = true;
+			break;
+		}
+		Cur = Cur->pnext;
+	}
+	if (check == false) return false;
+	if (Cur->CurNumStudent >= Cur->Maxstudent)
+	{
+		cout << "This course has been full of students" << endl;
+		return false;
+	}
+	if (this->NumCourse >= 5)
+	{
+		cout << "You has registered 5 courses" << endl;
+		return false;
+	}
+	// Hiện tại đã có class Cur check đã trùng với cái đăng kí chưa
+	for (Course_Result* k = this->RegistedCoursee; k != NULL; k = k->pnext1) {
+		if (Cur->Weekday1 == k->Weekday1)
+			if (Cur->shift1 == k->shift1)
+			{
+				cout << "This course has the same session with the one you registered" << endl;
+				return false;
+			}
+		if (Cur->Weekday1 == k->Weekday2)
+			if (Cur->shift1 == k->shift2)
+			{
+					cout << "This course has the same session with the one you registered" << endl;
+					return false;
+			}
+
+		if (Cur->Weekday2 == k->Weekday1)
+			if (Cur->shift2 == k->shift1)
+			{
+				cout << "This course has the same session with the one you registered" << endl;
+				return false;
+			}
+
+		if (Cur->Weekday2 == k->Weekday2)
+			if (Cur->shift2 == k->shift2)
+			{
+				cout << "This course has the same session with the one you registered" << endl;
+				return false;
+			}
+	}
+	return true;
+}
 void student::savefile(string path) {
 	ofstream fileout;
 	fileout.open(path, ios::out);
@@ -368,18 +441,12 @@ void student::input_file(string path) {
 	getline(filein, address);
 	filein.close();
 }
-void student::input_file2(ifstream& filein) {
-	getline(filein, ID, ',');
-	getline(filein, name, ',');
-	getline(filein, gender, ',');
-	getline(filein, birth);
-}
 void student::output() {
 	gotoxy(45, 3); cout << "Class : " << CLASS;
 	person::output();
 }
 void student::View_Class(string classname) {
-	student a;
+	tempStudent a; string b, c;
 	cout << setw(6) << left << "STT";
 	cout << setw(10) << left << "ID";		// độ rộng 5 ký tự, canh trái ID
 	cout << setw(30) << left << "Name";	// độ rộng 30 ký tự, canh trái Name
@@ -392,12 +459,15 @@ void student::View_Class(string classname) {
 	filein.open(classname + ".txt", ios::in);
 	int i = 0;
 	while (!filein.eof()) {
-		a.input_file2(filein);
+		getline(filein, a.ID, ',');
+		getline(filein, a.name, ',');
+		getline(filein, b, ',');
+		getline(filein, c);
 		cout << setw(6) << left << i + 1;
-		cout << setw(10) << left << a.getID();
-		cout << setw(30) << left << a.getname();
-		cout << setw(20) << left << a.getgender();
-		cout << setw(11) << left << a.getbirth() << endl;
+		cout << setw(10) << left << a.ID;
+		cout << setw(30) << left << a.name;
+		cout << setw(20) << left << b;
+		cout << setw(11) << left << c << endl;
 		i++;
 	}
 	filein.close();
@@ -435,6 +505,10 @@ void student::InsertRegCoursetoList(string &CourseID, semester& a)
 				fileout.close();
 			}
 			Course_Result* tempp = new Course_Result;
+			tempStudent* newstu = new tempStudent;
+			newstu->Class = CLASS;
+			newstu->ID = ID;
+			newstu->name = name;
 			tempp->Course_Code = CourseID;
 			tempp->Course_Name = i->Course_Name;
 			tempp->credits = i->credits;
@@ -452,15 +526,23 @@ void student::InsertRegCoursetoList(string &CourseID, semester& a)
 			}
 			else
 			{
-				Course_Result* pCur = RegistedCoursee;
-				while (pCur->pnext1 != NULL)
-				{
-					pCur = pCur->pnext1;
-				}
-				pCur->pnext1 = tempp;
+				
+				tempp->pnext1 = RegistedCoursee;
+				RegistedCoursee = tempp;
+			}
+			if (i->headStudent == NULL)
+			{
+				i->headStudent = newstu;
+			}
+			else
+			{
+				
+				newstu->pnext = i->headStudent;
+				i->headStudent = newstu;
 			}
 			i->CurNumStudent++;
 			tempp->CurNumStudent++;
+			break;
 		}
 	}
 	NumCourse++;
@@ -469,17 +551,20 @@ void student::InputRegCoursetoList_file(semester & a)
 {
 	if (checkFileWithFstream("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + ".txt"))
 	{
-		if (is_emptyy("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + ".txt") == false)
+		ifstream fileinn;
+		Course_Result* tempp;
+		if (is_emptyy("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + "Score.txt") == false)
 		{
-			ifstream fileinn;
-			Course_Result* tempp;
-			fileinn.open("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + ".txt", ios::in);
+			fileinn.open("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + "Score.txt", ios::in);
 			while (!fileinn.eof())
 			{
 				string s;
-				fileinn >> s;
+				fileinn >> s; fileinn.seekg(1, 1);
 				tempp = new Course_Result;
-				for (Course* i = a.CreatedCourse; i != NULL; i=i->pnext)
+				fileinn >> tempp->midTerm_point; fileinn.seekg(1, 1);
+				fileinn >> tempp->endTerm_point; fileinn.seekg(1, 1);
+				fileinn >> tempp->other_point; fileinn.seekg(1, 1); fileinn >> tempp->final_grade;
+				for (Course* i = a.CreatedCourse; i != NULL; i = i->pnext)
 				{
 					if (i->Course_Code == s)
 					{
@@ -500,24 +585,64 @@ void student::InputRegCoursetoList_file(semester & a)
 						}
 						else
 						{
-							Course_Result* pCur = RegistedCoursee;
-							while (pCur->pnext1 != NULL)
-							{
-								pCur = pCur->pnext1;
-							}
-							pCur->pnext1 = tempp;
+							tempp->pnext1 = RegistedCoursee;
+							RegistedCoursee = tempp;
 						}
+						NumCourse++;
 						break;
 					}
 				}
 			}
-			fileinn.close();
 		}
+		else
+		{
+			if (is_emptyy("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + ".txt") == false)
+			{
+				fileinn.open("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + ".txt", ios::in);
+				while (!fileinn.eof())
+				{
+					string s;
+					fileinn >> s;
+					tempp = new Course_Result;
+					for (Course* i = a.CreatedCourse; i != NULL; i = i->pnext)
+					{
+						if (i->Course_Code == s)
+						{
+							tempp->Course_Code = s;
+							tempp->Course_Name = i->Course_Name;
+							tempp->credits = i->credits;
+							tempp->CurNumStudent = i->CurNumStudent;
+							tempp->Maxstudent = i->Maxstudent;
+							tempp->Room = i->Room;
+							tempp->Teacher = i->Teacher;
+							tempp->Weekday1 = i->Weekday1;
+							tempp->Weekday2 = i->Weekday2;
+							tempp->shift1 = i->shift1;
+							tempp->shift2 = i->shift2;
+							if (RegistedCoursee == NULL)
+							{
+								RegistedCoursee = tempp;
+							}
+							else
+							{
+								tempp->pnext1 = RegistedCoursee;
+								RegistedCoursee = tempp;
+							}
+							NumCourse++;
+							break;
+						}
+					}
+				}
+			}
+		}
+		fileinn.close();
 	}
 	else
 	{
 		ofstream fileout;
 		fileout.open("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + ".txt", ios::out);
+		fileout.close();
+		fileout.open("sinhvien//" + ID + "//" + a.SchoolYear + "_" + a.name + "Score.txt", ios::out);
 		fileout.close();
 	}
 }
@@ -526,7 +651,6 @@ void student::register_course(semester &a) {
 	system("cls");
 	while (true)
 	{
-		ShowCur(0);
 		BangDangKiLopHoc(35, y, h, 50, ythanhsang);
 		if (_kbhit()) {
 			char c = _getch();
@@ -544,35 +668,50 @@ void student::register_course(semester &a) {
 			else if (c == 13) {
 				system("cls");
 				if (ythanhsang == y + 1) {
-					string answer;
-					while (true)
+					if (a.CheckEndReg == false)
 					{
-						system("cls");
-						view_notregistered_course(a);
-						view_registered_course(a);
-						cout << "1. Register Course." << endl;
-						cout << "2. Delete Course." << endl;
-						cout << "0. Go back." << endl << endl;
-						cout << "Your Choice: ";
-						cin >> answer;
-						if (answer == "1")
+						string answer;
+						while (true)
 						{
-							string CourseID;
-							cout << "ID of Course you want to register :";
-							cin >> CourseID;
-							InsertRegCoursetoList(CourseID, a);
+							system("cls");
+							view_notregistered_course(a);
+							view_registered_course(a);
+							ShowCur(1);
+							cout << "1. Register Course." << endl;
+							cout << "2. Delete Course." << endl;
+							cout << "0. Go back." << endl << endl;
+							cout << "Your Choice: ";
+							cin >> answer;
+							if (answer == "1")
+							{
+								string CourseID;
+								cout << "ID of Course you want to register :";
+								cin >> CourseID;
+								if (CheckCourse(CourseID, a) == false)
+								{
+									cout << "Enter to continue" << endl;
+									system("pause");
+									continue;
+								}
+								InsertRegCoursetoList(CourseID, a);
+							}
+							else if (answer == "2")
+							{
+								string CourseID;
+								cout << "ID of Course you want to register :";
+								cin >> CourseID;
+								delete_course(CourseID, a);
+							}
+							else
+							{
+								break;
+							}
 						}
-						else if (answer == "2")
-						{
-							string CourseID;
-							cout << "ID of Course you want to register :";
-							cin >> CourseID;
-							delete_course(CourseID, a);
-						}
-						else
-						{
-							break;
-						}
+					}
+					else
+					{
+						cout << "The time for registering course is over. Enter to go back" << endl;
+						system("pause");
 					}
 				}
 				else if (ythanhsang == y + (h + 1) + 1) {
@@ -670,15 +809,15 @@ void student::delete_course(string &CourseID,semester &a) {
 					break;
 				}
 			}
+			NumCourse--;
 			break;
 		}
 		pCur = i;
 	}
 }
 void student::view_registered_course(semester &a) {
-	cout << endl;
-	string shift1, shift2, session1, session2;
-	cout << "\t\t\t\t\tCourse you registered" << endl;
+	cout << endl << endl;
+	cout << "\t\t\t\t\tCourse you registered" << endl << endl;
 	cout << setw(11) << left << "  ID";
 	cout << setw(14) << left << "Course_name";		// độ rộng 5 ký tự, canh trái ID
 	cout << setw(9) << left << "Credit";	// độ rộng 30 ký tự, canh trái Name
@@ -689,20 +828,16 @@ void student::view_registered_course(semester &a) {
 	cout << setw(7) << left << "Room";
 	cout << setw(6) << left << "Current student" << endl;
 	cout << setfill('-');		// set fill bằng ký tự '-' thay vì ' '
-	cout << setw(112) << "-" << endl;	// fill 55 ký tự '-'
+	cout << setw(115) << "-" << endl;	// fill 55 ký tự '-'
 	cout << setfill(' ');
 		for (Course_Result* j = RegistedCoursee; j != NULL; j = j->pnext1)
 		{
-				shift1 = to_string(j->shift1);
-				shift2 = to_string(j->shift2);
-				session1 = j->Weekday1 + " (" + shift1 + ")";
-				session2 = j->Weekday2 + " (" + shift2 + ")";
 				cout << setw(11) << left << j->Course_Code;
 				cout << setw(14) << left << j->Course_Name;		// độ rộng 5 ký tự, canh trái ID
 				cout << setw(9) << left << j->credits;	// độ rộng 30 ký tự, canh trái Name
 				cout << setw(6) << left << j->Maxstudent;	// độ rộng 20 ký tự, canh phải Address
-				cout << setw(12) << left << session1;
-				cout << setw(12) << left << session2;
+				cout << setw(12) << left << j->Weekday1 + " (" + to_string(j->shift1) + ")";
+				cout << setw(12) << left << j->Weekday2 + " (" + to_string(j->shift2) + ")";
 				cout << setw(27) << left << j->Teacher;
 				cout << setw(10) << left << j->Room;
 				cout << setw(6) << left << j->CurNumStudent << endl;
@@ -712,7 +847,7 @@ void student::view_registered_course(semester &a) {
 void student::view_notregistered_course(semester& a)
 {
 	cout << "\t\t\t\t(1) 7h30   (2) 9h30   (3) 13h30   (4) 15h30" << endl << endl;
-	cout << "\t\t\t\t\tCourse you did not register" << endl;
+	cout << "\t\t\t\t\tCourse you did not register" << endl << endl;
 	cout << setw(11) << left << "  ID";
 	cout << setw(14) << left << "Course_name";		// độ rộng 5 ký tự, canh trái ID
 	cout << setw(9) << left << "Credit";	// độ rộng 30 ký tự, canh trái Name
@@ -723,10 +858,9 @@ void student::view_notregistered_course(semester& a)
 	cout << setw(7) << left << "Room";
 	cout << setw(6) << left << "Current student" << endl;
 	cout << setfill('-');		// set fill bằng ký tự '-' thay vì ' '
-	cout << setw(112) << "-" << endl;	// fill 55 ký tự '-'
+	cout << setw(115) << "-" << endl;	// fill 55 ký tự '-'
 	cout << setfill(' ');
-	string shift1, shift2, session1, session2; bool check;
-
+	bool check;
 	for (Course* j = a.CreatedCourse; j != NULL; j = j->pnext)
 	{
 		check = true;
@@ -740,16 +874,12 @@ void student::view_notregistered_course(semester& a)
 		}
 		if (check)
 		{
-			shift1 = to_string(j->shift1);
-			shift2 = to_string(j->shift2);
-			session1 = j->Weekday1 + " (" + shift1 + ")";
-			session2 = j->Weekday2 + " (" + shift2 + ")";
 			cout << setw(11) << left << j->Course_Code;
 			cout << setw(14) << left << j->Course_Name;		// độ rộng 5 ký tự, canh trái ID
 			cout << setw(9) << left << j->credits;	// độ rộng 30 ký tự, canh trái Name
 			cout << setw(6) << left << j->Maxstudent;	// độ rộng 20 ký tự, canh phải Address
-			cout << setw(12) << left << session1;
-			cout << setw(12) << left << session2;
+			cout << setw(12) << left << j->Weekday1 + " (" + to_string(j->shift1) + ")";
+			cout << setw(12) << left << j->Weekday2 + " (" + to_string(j->shift2) + ")";
 			cout << setw(27) << left << j->Teacher;
 			cout << setw(10) << left << j->Room;
 			cout << setw(6) << left << j->CurNumStudent << endl;
@@ -757,6 +887,11 @@ void student::view_notregistered_course(semester& a)
 	}
 }
 void student::view_course_member(fstream course_registered) {
+}
+void student::View_Score(semester &a)
+{
+	cout << a.SchoolYear;
+	cout << a.name;
 }
 student::~student()
 {
@@ -778,14 +913,14 @@ void staff::savefile(string path)
 	fileout << name << "," << ID << "," << gender << "," << birth << "," << socialID << "," << phone << "," << address;
 	fileout.close();
 }
-void staff::create_schoolyear(YearCreated*& head, const date& currentday)
+void staff::create_schoolyear(Something*& headYear, const date& currentday)
 {
 	if (currentday.day == 1 && currentday.month == 9)
 	{
 		string year;
 		cout << "School year (ex: 2021-2022): ";
 		cin >> year;
-		PushArrangeCreatedYear(head, year);
+		PushArrangeCreatedYear(headYear, year);
 		fstream fileout;
 		_mkdir(year.c_str());
 		fileout.open(year + "\\class.txt", ios::out);
@@ -796,7 +931,7 @@ void staff::create_schoolyear(YearCreated*& head, const date& currentday)
 		fileout.close();
 		fileout.open(year + "\\semester 3.txt", ios::out);
 		fileout.close();
-		OutputCreatedYear_File(head);
+		OutputCreatedYear_File(headYear);
 	}
 	else
 	{
@@ -823,7 +958,7 @@ void staff::add_student()
 }
 void staff::View_Class(string classname)
 {
-	student a;
+	tempStudent a; string b, c;
 	cout << setw(6) << left << "STT";
 	cout << setw(10) << left << "ID";		// độ rộng 5 ký tự, canh trái ID
 	cout << setw(30) << left << "Name";	// độ rộng 30 ký tự, canh trái Name
@@ -835,25 +970,22 @@ void staff::View_Class(string classname)
 	ifstream filein;
 	filein.open(classname + ".txt", ios::in);
 	int i = 0;
-	while (!filein.eof())
-	{
-		a.input_file2(filein);
+	while (!filein.eof()) {
+		getline(filein, a.ID, ',');
+		getline(filein, a.name, ',');
+		getline(filein, b, ',');
+		getline(filein, c);
 		cout << setw(6) << left << i + 1;
-		cout << setw(10) << left << a.getID();
-		cout << setw(30) << left << a.getname();
-		cout << setw(20) << left << a.getgender();
-		cout << setw(11) << left << a.getbirth() << endl;
+		cout << setw(10) << left << a.ID;
+		cout << setw(30) << left << a.name;
+		cout << setw(20) << left << b;
+		cout << setw(11) << left << c << endl;
 		i++;
 	}
 	filein.close();
 }
-void staff::create_class(YearCreated*& head)
+void staff::create_class(Something*& headYear)
 {
-	string year;
-	fstream filein1;
-	fstream filein2;
-	string lop;
-	string path;
 	int ythanhsang = 6, y = 5, h = 1;
 	while (true) {
 		BangTaoLop(35, 5, 1, 50, ythanhsang);
@@ -875,6 +1007,7 @@ void staff::create_class(YearCreated*& head)
 				ShowCur(1);
 				if (ythanhsang == y + 1)
 				{
+					string year;
 					cout << "If you want to comback, just type 0." << endl;
 					do
 					{
@@ -887,6 +1020,9 @@ void staff::create_class(YearCreated*& head)
 					} while (FolderExists(year.c_str()) == false && year != "0");
 					if (year != "0")
 					{
+						fstream filein1;
+						fstream filein2;
+						string lop;
 						filein2.open(year + "\\class.txt", ios::out | ios::app);
 						char  answer;
 						do
@@ -914,48 +1050,10 @@ void staff::create_class(YearCreated*& head)
 					}
 				}
 				else if (ythanhsang == y + (h + 1) + 1) {
-					cout << endl;
-					cout << "If you want to comback, just type 0." << endl;
-					do
-					{
-						cout << "School year (ex: 2021-2022): ";
-						cin >> year;
-						if (FolderExists(year.c_str()) == false)
-						{
-							cout << "There is not this school year. Try again!" << endl;
-						}
-					} while (FolderExists(year.c_str()) == false && year != "0");
-					if (year != "0")
-					{
-						filein2.open(year + "\\class.txt", ios::out | ios::app);
-						char  answer;
-						do
-						{
-							cout << "Name of class: ";
-							cin >> lop;
-							if (lop == "0")break;
-							filein1.open(lop + ".txt", ios::in);
-							if (filein1.fail())
-							{
-								cout << "There is not this file class. Try again!" << endl;
-								answer = 'Y';
-								filein1.close();
-								continue;
-							}
-							else
-							{
-								filein1.close();
-								filein2 << lop << ",";
-							}
-							cout << "Complete! Do you want to continue ? (Y/N): ";
-							cin >> answer;
-						} while (answer == 'Y' || answer == 'y');
-						filein2.close();
-					}
 				}
 				else if (ythanhsang == y + 2 * (h + 1) + 1)
 				{
-					if (head == NULL)
+					if (headYear == NULL)
 					{
 						cout << "Currently there is no schoolyear. So that there are not any class. Please create year, create class to continue." << endl;
 						cout << "ENTER TO CONTINUE" << endl;
@@ -967,7 +1065,7 @@ void staff::create_class(YearCreated*& head)
 						while (true)
 						{
 							system("cls");
-							OutputList(head);
+							OutputList(headYear);
 							cout << endl;
 							cout << "If you want to go back just type 0" << endl;
 							cout << "School year you want to see list class (ex 2021-2022): ";
@@ -989,7 +1087,6 @@ void staff::create_class(YearCreated*& head)
 									ifstream filein;
 									string a;
 									string answer;
-									string name;
 									Something* ClassInYear = NULL;
 									filein.open(year1 + "\\class.txt", ios::in);
 									while (!filein.eof())
@@ -1124,7 +1221,7 @@ void staff::create_course(semester &a) {
 			int ythanhsang = y + 1;
 			while (true) {
 				ShowCur(0);
-				CourseMenu(35, y, h, 50, ythanhsang);
+				CourseMenu(35, 8, 1, 50, ythanhsang);
 				if (_kbhit()) {
 					char c = _getch();
 					if (c == -32) {
@@ -1177,6 +1274,93 @@ void staff::create_course(semester &a) {
 						}
 						else if (ythanhsang == y + 1 * (h + 1) + 1) {
 							system("cls");
+							ShowCur(1);
+							while (true)
+							{
+								system("cls");
+								a.BangDanhSachCourse();
+								cout << endl << endl;
+								cout << "1. View list student in the course. " << endl;
+								cout << "0. Go back." << endl;
+								cout << "Your choice: ";
+								cin >> answer;
+								if (answer == "1")
+								{
+									string courseName, courseID;
+									cin.ignore();
+									cout << "Enter course ID: ";
+									getline(cin, courseID);
+									cout << "Enter course name: ";
+									getline(cin, courseName);
+									Course* courseCheck = nullptr;
+									for (courseCheck = a.CreatedCourse; courseCheck != nullptr; courseCheck = courseCheck->pnext)
+									{
+										if (courseCheck->Course_Code == courseID && courseCheck->Course_Name == courseName)
+										{
+											system("cls");
+											cout << courseCheck->Course_Code << " - " << courseCheck->Course_Name << " - " << courseCheck->Teacher << endl << endl;
+											cout << "Current Student Number: " << courseCheck->CurNumStudent << endl;
+											if (courseCheck->CurNumStudent > 0)
+											{
+												cout << setfill('_');
+												cout << setw(71) << "_" << endl;
+												cout << setfill(' ');
+												cout << setw(10) << left << "|No";
+												cout << setw(10) << left << "|ID";
+												cout << setw(30) << left << "|Name";
+												cout << setw(20) << left << "|Class";
+												cout << setw(1) << "|" << endl;
+												cout << setw(1) << "|";
+												cout << setfill('-');
+												cout << setw(9) << "-";
+												cout << setw(1) << "|";
+												cout << setw(9) << "-";
+												cout << setw(1) << "|";
+												cout << setw(29) << "-";
+												cout << setw(1) << "|";
+												cout << setw(19) << "-";
+												cout << setw(1) << "|" << endl;
+												cout << setfill(' ');
+												int i = 0;
+												for (tempStudent* stu = courseCheck->headStudent; stu != nullptr; stu = stu->pnext)
+												{
+													i++;
+													cout << "|" << setw(9) << left << i;
+													cout << "|" << setw(9) << left << stu->ID;
+													cout << "|" << setw(29) << left << stu->name;
+													cout << "|" << setw(19) << left << stu->Class;
+													cout << setw(1) << left << "|" << endl;
+												}
+												cout << setw(1) << "|";
+												cout << setfill('_');
+												cout << setw(9) << "_";
+												cout << setw(1) << "|";
+												cout << setw(9) << "_";
+												cout << setw(1) << "|";
+												cout << setw(29) << "_";
+												cout << setw(1) << "|";
+												cout << setw(19) << "_";
+												cout << setw(1) << "|" << endl << endl;
+												cout << setfill(' ');
+											}
+											else
+												cout << "There is no student in this course" << endl << endl;
+											system("pause");
+											break;
+										}
+									}
+									if (courseCheck == nullptr)
+									{
+										cout << "No course has name or ID like that" << endl;
+										system("pause");
+									}
+								}
+								else
+								{
+									system("cls");
+									break;
+								}
+							}
 							system("cls");
 						}
 						else if (ythanhsang == y + 2 * (h + 1) + 1) {
@@ -1215,8 +1399,8 @@ void staff::adjust_Courses(semester &a) {
 			string Course_name, Course_code; bool check = true;
 			while (check)
 			{
-				cout << "Name of course (if you want to change the name of course,you have to type the current name of that course) : "; cin.ignore(); getline(cin, Course_name);
-				cout << "ID of course (if you want to change the ID of course,you have to type the current ID of that course): "; cin >> Course_code;
+				cout << "Name of course (Current name of that course) : "; cin.ignore(); getline(cin, Course_name);
+				cout << "ID of course (Current ID of that course): "; cin >> Course_code;
 				for (Course* i = a.CreatedCourse; i != NULL; i = i->pnext)
 				{
 					if (i->Course_Name == Course_name && i->Course_Code == Course_code)
@@ -1251,7 +1435,6 @@ void staff::adjust_Courses(semester &a) {
 					cout << "There is not this course. Try again !" << endl;
 				}
 			} 
-
 		}
 		else
 		{
@@ -1298,6 +1481,46 @@ void staff::delete_course(semester& a) {
 				break;
 			}
 		}
+}
+void staff::Score(semester &a){}
+void staff::create_FileScoreboard(semester &a){}
+void staff::view_ScoreCourse(string& CourseID,semester &a){}
+void staff::update_ScoreStudent(semester& a)
+{
+	ifstream filein1; string tempp; short no, m, n, p, q; tempStudent b; ofstream fileout1;
+	for (Course* i = a.CreatedCourse; i != NULL; i=i->pnext)
+	{
+		filein1.open(i->Course_Code + "_" + a.SchoolYear + "_" + a.name + "_Score.txt", ios::in);
+		getline(filein1, tempp);
+		while (!filein1.eof())
+		{
+			filein1 >> no;
+			filein1.seekg(1, 1);
+			getline(filein1, b.ID, ',');
+			getline(filein1, b.name, ',');
+			filein1 >> m;
+			filein1.seekg(1, 1);
+			filein1 >> n;
+			filein1.seekg(1, 1);
+			filein1 >> p;
+			filein1.seekg(1, 1);
+			filein1 >> q;
+			fileout1.open("sinhvien//" + b.ID + "//" + a.SchoolYear + "_" + a.name + "_Score.txt", ios::out | ios::app);
+			if (is_emptyy("sinhvien//" + b.ID + "//" + a.SchoolYear + "_" + a.name + "_Score.txt"))
+			{
+				fileout1 << i->Course_Code << "," << m << "," << n << "," << p << "," << q;
+				fileout1.close();
+			}
+			else
+			{
+				fileout1 << endl;
+				fileout1 << i->Course_Code << "," << m << "," << n << "," << p << "," << q;
+				fileout1.close();
+			}
+		}
+		filein1.close();
+	}
+
 }
 void staff::read_studentList() {
 }
