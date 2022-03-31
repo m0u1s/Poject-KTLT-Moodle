@@ -1582,6 +1582,7 @@ void staff::Score(semester& a)
 							cin.ignore();
 							cout << "Enter course ID: ";
 							getline(cin, courseID);
+							system("cls");
 							view_ScoreCourse(courseID, a);
 							system("pause");
 						}
@@ -1627,19 +1628,82 @@ void staff::view_ScoreCourse(string& CourseID, semester& a)
 {
 	ifstream filein;
 	tempStudent b; float no, m, n, p, q;
+	/*
+	if (courseCheck->CurNumStudent > 0)
+	{
+		cout << setfill('_');
+		cout << setw(71) << "_" << endl;
+		cout << setfill(' ');
+		cout << setw(10) << left << "|No";
+		cout << setw(10) << left << "|ID";
+		cout << setw(30) << left << "|Name";
+		cout << setw(20) << left << "|Class";
+		cout << setw(1) << "|" << endl;
+		cout << setw(1) << "|";
+		cout << setfill('-');
+		cout << setw(9) << "-";
+		cout << setw(1) << "|";
+		cout << setw(9) << "-";
+		cout << setw(1) << "|";
+		cout << setw(29) << "-";
+		cout << setw(1) << "|";
+		cout << setw(19) << "-";
+		cout << setw(1) << "|" << endl;
+		cout << setfill(' ');
+		int i = 0;
+		for (tempStudent* stu = courseCheck->headStudent; stu != nullptr; stu = stu->pnext)
+		{
+			i++;
+			cout << "|" << setw(9) << left << i;
+			cout << "|" << setw(9) << left << stu->ID;
+			cout << "|" << setw(29) << left << stu->name;
+			cout << "|" << setw(19) << left << stu->Class;
+			cout << setw(1) << left << "|" << endl;
+		}
+		cout << setw(1) << "|";
+		cout << setfill('_');
+		cout << setw(9) << "_";
+		cout << setw(1) << "|";
+		cout << setw(9) << "_";
+		cout << setw(1) << "|";
+		cout << setw(29) << "_";
+		cout << setw(1) << "|";
+		cout << setw(19) << "_";
+		cout << setw(1) << "|" << endl << endl;
+		cout << setfill(' ');
+	}
+	*/
 	if (checkFileWithFstream(CourseID + "_" + a.SchoolYear + "_" + a.name + "_Score.txt"))
 	{
 		filein.open(CourseID + "_" + a.SchoolYear + "_" + a.name + "_Score.txt", ios::in);
 		string s; getline(filein, s);
-		cout << setw(6) << left << "No";
-		cout << setw(11) << left << "ID";		// độ rộng 5 ký tự, canh trái ID
-		cout << setw(30) << left << "Full Name";	// độ rộng 30 ký tự, canh trái Name
-		cout << setw(17) << left << "Midterm Mark";	// độ rộng 20 ký tự, canh phải Address
-		cout << setw(16) << left << "Final Mark";
-		cout << setw(16) << left << "Other Mark";
-		cout << setw(14) << left << "Total Mark" << endl;
-		cout << setfill('-');		// set fill bằng ký tự '-' thay vì ' '
-		cout << setw(115) << "-" << endl;	// fill 55 ký tự '-'
+		cout << setfill('_');
+		cout << setw(117) << "_" << endl;
+		cout << setfill(' ');
+		cout << setw(7) << left << "|No";
+		cout << setw(12) << left << "|ID";		// độ rộng 5 ký tự, canh trái ID
+		cout << setw(31) << left << "|Full Name";	// độ rộng 30 ký tự, canh trái Name
+		cout << setw(18) << left << "|Midterm Mark";	// độ rộng 20 ký tự, canh phải Address
+		cout << setw(17) << left << "|Final Mark";
+		cout << setw(17) << left << "|Other Mark";
+		cout << setw(15) << left << "|Total Mark";
+		cout << "|" << endl;
+		cout << "|";
+		cout << setfill('-');
+		cout << setw(6) << "-";
+		cout << setw(1) << "|";
+		cout << setw(11) << "-";
+		cout << setw(1) << "|";
+		cout << setw(30) << "-";
+		cout << setw(1) << "|";
+		cout << setw(17) << "-";
+		cout << setw(1) << "|";
+		cout << setw(16) << "-";
+		cout << setw(1) << "|";
+		cout << setw(16) << "-";
+		cout << setw(1) << "|";
+		cout << setw(14) << "-";
+		cout << setw(1) << "|" << endl;
 		cout << setfill(' ');
 		while (!filein.eof())
 		{
@@ -1650,14 +1714,31 @@ void staff::view_ScoreCourse(string& CourseID, semester& a)
 			filein >> n; filein.seekg(1, 1);
 			filein >> p; filein.seekg(1, 1);
 			filein >> q;
-			cout << setw(6) << left << no;
-			cout << setw(11) << left << b.ID;
-			cout << setw(34) << left << b.name;
-			cout << setw(17) << left << m;
-			cout << setw(16) << left << n;
-			cout << setw(16) << left << p;
-			cout << setw(14) << left << q << endl;
+			cout << "|" << setw(6) << left << no;
+			cout << "|" << setw(11) << left << b.ID;
+			cout << "|" << setw(30) << left << b.name;
+			cout << "|" << setw(17) << left << m;
+			cout << "|" << setw(16) << left << n;
+			cout << "|" << setw(16) << left << p;
+			cout << "|" << setw(14) << left << q;
+			cout << "|" << endl;
 		}
+		cout << "|";
+		cout << setfill('_');
+		cout << setw(6) << "_";
+		cout << setw(1) << "|";
+		cout << setw(11) << "_";
+		cout << setw(1) << "|";
+		cout << setw(30) << "_";
+		cout << setw(1) << "|";
+		cout << setw(17) << "_";
+		cout << setw(1) << "|";
+		cout << setw(16) << "_";
+		cout << setw(1) << "|";
+		cout << setw(16) << "_";
+		cout << setw(1) << "|";
+		cout << setw(14) << "_";
+		cout << setw(1) << "|" << endl;
 		filein.close();
 	}
 	else
