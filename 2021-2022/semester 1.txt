@@ -1,0 +1,9 @@
+1,9,31,12
+5,9,20,9
+CSC10002,KTLT,5,50,Mon,1,Mon,2,I33,Quoc Anh
+MTH00009,TRR,5,70,Mon,3,Mon,4,C22,Nguyen Ngoc Kim Ngan
+CSK00050,DHMT,6,70,Tue,1,Tue,2,I45,Anh Tuan
+KNM00008,KNM,5,50,Tue,3,Tue,4,C44,Luong Vi Minh
+CSC00001,NMCNTT,5,70,Wed,1,Wed,2,I56,Minh Quan
+CSC00002,NMLT,5,60,Thu,1,Thu,2,I67,Viet Anh
+KTD00004,KTDC,5,70,Wed,3,Tue,1,I77,Minh Thuan
