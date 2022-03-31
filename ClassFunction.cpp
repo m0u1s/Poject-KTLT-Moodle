@@ -447,13 +447,27 @@ void student::output() {
 }
 void student::View_Class(string classname) {
 	tempStudent a; string b, c;
-	cout << setw(6) << left << "STT";
-	cout << setw(10) << left << "ID";		// độ rộng 5 ký tự, canh trái ID
-	cout << setw(30) << left << "Name";	// độ rộng 30 ký tự, canh trái Name
-	cout << setw(20) << left << "Gender";	// độ rộng 20 ký tự, canh phải Address
-	cout << setw(11) << left << "birth" << endl;
-	cout << setfill('-');		// set fill bằng ký tự '-' thay vì ' '
-	cout << setw(77) << "-" << endl;	// fill 55 ký tự '-'
+	cout << setfill('_');
+	cout << setw(77) << "_" << endl;
+	cout << setfill(' ');
+	cout << setw(6) << left << "|STT";
+	cout << setw(10) << left << "|ID";
+	cout << setw(30) << left << "|Name";
+	cout << setw(20) << left << "|Gender";
+	cout << setw(11) << left << "|birth";
+	cout << "|" << endl;
+	cout << setw(1) << "|";
+	cout << setfill('-');
+	cout << setw(5) << "-";
+	cout << setw(1) << "|";
+	cout << setw(9) << "-";
+	cout << setw(1) << "|";
+	cout << setw(29) << "-";
+	cout << setw(1) << "|";
+	cout << setw(19) << "-";
+	cout << setw(1) << "|";
+	cout << setw(10) << "-";
+	cout << setw(1) << "|" << endl;
 	cout << setfill(' ');
 	ifstream filein;
 	filein.open(classname + ".txt", ios::in);
@@ -463,13 +477,26 @@ void student::View_Class(string classname) {
 		getline(filein, a.name, ',');
 		getline(filein, b, ',');
 		getline(filein, c);
-		cout << setw(6) << left << i + 1;
-		cout << setw(10) << left << a.ID;
-		cout << setw(30) << left << a.name;
-		cout << setw(20) << left << b;
-		cout << setw(11) << left << c << endl;
+		cout << "|" << setw(5) << left << i + 1;
+		cout << "|" << setw(9) << left << a.ID;
+		cout << "|" << setw(29) << left << a.name;
+		cout << "|" << setw(19) << left << b;
+		cout << "|" << setw(10) << left << c;
+		cout << "|" << endl;
 		i++;
 	}
+	cout << setw(1) << "|";
+	cout << setfill('_');
+	cout << setw(5) << "_";
+	cout << setw(1) << "|";
+	cout << setw(9) << "_";
+	cout << setw(1) << "|";
+	cout << setw(29) << "_";
+	cout << setw(1) << "|";
+	cout << setw(19) << "_";
+	cout << setw(1) << "|";
+	cout << setw(10) << "_";
+	cout << setw(1) << "|" << endl;
 	filein.close();
 }
 void student::InsertRegCoursetoList(string &CourseID, semester& a)
