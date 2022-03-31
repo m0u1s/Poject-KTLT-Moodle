@@ -1,0 +1,4 @@
+No, Student ID, Student Full Name, Midterm Mark, Final Mark, Other Mark, Total Mark
+1,21127561,do ann Ngo,1,1,2,4
+2,21111111,Le ann tung,2,2,2,6
+3,21127342,do ann e,3,3,2,8

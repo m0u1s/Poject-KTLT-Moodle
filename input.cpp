@@ -90,6 +90,7 @@ public:
 	void delete_course(fstream &course_registered);
 	void view_registered_course(fstream course_registered);
 	void view_course_member(fstream course_registered);
+	
 
 private:
 	void view_results(fstream result_list); // b/c 1 student only see his/her results other can't

@@ -1,0 +1,7 @@
+21clc01,do ann tuan,21127194
+21clc01,do an tung,21127777
+21clc02,do ann Binh,21128888
+21clc02,do ann Ngo,21127561
+21clc02,do ann Thinh,21127771
+21clc01,Le ann tung,21111111
+21clc02,Nguyen Thien tai,21111112

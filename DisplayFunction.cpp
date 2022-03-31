@@ -1,5 +1,5 @@
 ﻿#include"MainFunction.h"
-void Create_Board_Content(int x, int y, int h, int w, string content, int ythanhsang, int j)
+void Create_Board_Content(int &x, int y, int &h, int &w, string content, int &ythanhsang, int j)
 {
 	for (int i = x; i < x + w; i++)
 	{
@@ -42,21 +42,17 @@ void Create_n_Board_Col(int n, int x, int y, int h, int w)
 		Create_Board(x, y + (h + 1) * i, h, w);
 	}
 }
-void Create_n_Board_Row(int n, int x, int y, int h, int w)
-{
-	for (int i = 0; i < n; i++)
-	{
-		Create_Board(x + w * i + 1 * i, y, h, w);
-	}
-}
 void BangTaoLop(int x, int y, int h, int w, int ythanhsang) {
 	Create_Board_Content(x, y, h, w, "CREATE CLASSES FROM FILE", ythanhsang);
-	Create_Board_Content(x, y + h + 1, 1, 50, "CREATE CLASSES", ythanhsang);
-	Create_Board_Content(x, y + 2 * (h + 1), 1, 50, "SEE LIST CLASS", ythanhsang);
-	Create_Board_Content(x, y + 3 * (h + 1), 1, 50, "GO BACK TO MENU", ythanhsang);
+	Create_Board_Content(x, y + h + 1, h, w, "CREATE CLASSES", ythanhsang);
+	Create_Board_Content(x, y + 2 * (h + 1), h, w, "SEE LIST CLASS", ythanhsang);
+	Create_Board_Content(x, y + 3 * (h + 1), h, w, "GO BACK TO MENU", ythanhsang);
 }
-
-//UI Course Menu
+void BangDangKiLopHoc(int x, int y, int h, int w, int ythanhsang) {
+	Create_Board_Content(x, y, h, w, "REGIST COURSE", ythanhsang);
+	Create_Board_Content(x, y + h + 1, h, w, "VIEW REGISTED COURSE", ythanhsang);
+	Create_Board_Content(x, y + 2 * (h + 1), h, w, "GO BACK TO MENU", ythanhsang);
+}
 void CourseMenu(int x, int y, int h, int w, int ythanhsang) {
 	Create_Board_Content(x, y, h, w, "CREATE COURSE", ythanhsang);
 	Create_Board_Content(x, y + 1 * (h + 1), h, w, "LIST COURSE", ythanhsang);
@@ -64,81 +60,25 @@ void CourseMenu(int x, int y, int h, int w, int ythanhsang) {
 	Create_Board_Content(x, y + 3 * (h + 1), h, w, "UPDATE COURSE", ythanhsang);
 	Create_Board_Content(x, y + 4 * (h + 1), h, w, "GO BACK TO MENU", ythanhsang);
 }
-void UICourseMenu() {
-	ShowCur(0);
-	int y = 8, h = 1;
-	int ythanhsang = y + 1;
-	while (true) {
-		CourseMenu(35, y, h, 50, ythanhsang);
-		if (_kbhit()) {
-			char c = _getch();
-			if (c == -32) {
-				c = _getch();
-				if (c == 80) {
-					if (ythanhsang == y + 4 * (h + 1) + 1) ythanhsang = y + 1;
-					else ythanhsang += 2;
-				}
-				else if (c == 72) {
-					if (ythanhsang == y + 1) ythanhsang = y + 4 * (h + 1) + 1;
-					else ythanhsang -= 2;
-				}
-			}
-			else if (c == 13) {
-				system("cls");
-				if (ythanhsang == y + 1) {
-					cout << "CREATE COURSE" << endl;
-					cout << "This is a test" << endl;
-				}
-				else if (ythanhsang == y + 1 * (h + 1) + 1) {
-					cout << "LIST COURSE" << endl;
-					cout << "This is a test" << endl;
-				}
-				else if (ythanhsang == y + 2 * (h + 1) + 1) {
-					cout << "REMOVE COURSE" << endl;
-					cout << "This is a test" << endl;
-				}
-				else if (ythanhsang == y + 3 * (h + 1) + 1) {
-					cout << "UPDATE COURSE" << endl;
-					cout << "This is a test" << endl;
-				}
-				else if (ythanhsang == y + 4 * (h + 1) + 1) {
-					break;
-				}
-				system("pause");
-				system("cls");
-				if (_kbhit())
-					continue;
-			}
-		}
-	}
-}
-
-//Hàm liên quan đến giao diện chính
-bool checkendreg(date& start, date& end, date cur)
+void ScoreMenuStaff(int x, int y, int h, int w, int ythanhsang)
 {
-	if (cur.month > end.month || (cur.day == 1 && (cur.month == 9 || cur.month == 1 || cur.month == 5)) || cur.month < start.month)
-	{
-		return true;
-	}
-	else if (cur.month == end.month)
-	{
-		if (cur.day > end.day || cur.day < start.day)
-		{
-			return true;
-		}
-	}
-	return false;
+	Create_Board_Content(x, y, h, w, "CREATE FILE SCORE", ythanhsang);
+	Create_Board_Content(x, y + 1 * (h + 1), h, w, "UPDATE SCORE STUDENT", ythanhsang);
+	Create_Board_Content(x, y + 2 * (h + 1), h, w, "VIEW CLASS SCORE", ythanhsang);
+	Create_Board_Content(x, y + 3 * (h + 1), h, w, "VIEW COURSE SCORE", ythanhsang);
+	Create_Board_Content(x, y + 4 * (h + 1), h, w, "GO BACK TO MENU", ythanhsang);
 }
-void Menu_SinhVien(int x, int y, int h, int w, int ythanhsang)
+//Hàm liên quan đến giao diện chính
+void Menu_SinhVien(int &x, int &y, int &h, int &w, int &ythanhsang)
 {
 	Create_Board_Content(x, y, h, w, "YOUR INFORMATION", ythanhsang);
 	Create_Board_Content(x, y + h + 1, h, w, "CHANGE PASSWORD", ythanhsang);
 	Create_Board_Content(x, y + 2 * (h + 1), h, w, "VIEW MEMBER IN YOUR CLASS", ythanhsang);
-	Create_Board_Content(x, y + 3 * (h + 1), h, w, "REGIST COURSE", ythanhsang);
+	Create_Board_Content(x, y + 3 * (h + 1), h, w, "REGISTER COURSE", ythanhsang);
 	Create_Board_Content(x, y + 4 * (h + 1), h, w, "SCORE COURSE", ythanhsang);
 	Create_Board_Content(x, y + 5 * (h + 1), h, w, "LOG OUT", ythanhsang);
 }
-void Menu_GiaoVu(int x, int y, int h, int w, int ythanhsang)
+void Menu_GiaoVu(int &x, int &y, int &h, int &w, int &ythanhsang)
 {
 	Create_Board_Content(x, y, h, w, "YOUR INFORMATION", ythanhsang);
 	Create_Board_Content(x, y + h + 1, h, w, "CHANGE PASSWORD", ythanhsang);
@@ -147,7 +87,8 @@ void Menu_GiaoVu(int x, int y, int h, int w, int ythanhsang)
 	Create_Board_Content(x, y + 4 * (h + 1), h, w, "CREATE SEMESTER", ythanhsang);
 	Create_Board_Content(x, y + 5 * (h + 1), h, w, "CREATE COURSE", ythanhsang);
 	Create_Board_Content(x, y + 6 * (h + 1), h, w, "ADD STUDENT", ythanhsang);
-	Create_Board_Content(x, y + 7 * (h + 1), h, w, "LOG OUT", ythanhsang);
+	Create_Board_Content(x, y + 7 * (h + 1), h, w, "SCORE", ythanhsang);
+	Create_Board_Content(x, y + 8 * (h + 1), h, w, "LOG OUT", ythanhsang);
 }
 bool GiaoDienDoiMatKhau_SinhVien(int x, int y, int h, int w, student& student1)
 {
@@ -177,7 +118,7 @@ bool GiaoDienDoiMatKhau_SinhVien(int x, int y, int h, int w, student& student1)
 		gotoxy(i, y + 8); cout << " ";
 		gotoxy(i, y + 12); cout << " ";
 	}
-	char currentpassword[30]; int j = 0;
+	char currentpassword[27]; int j = 0;
 	gotoxy(x + 1, y + 4);
 	while (true)
 	{
@@ -226,7 +167,7 @@ bool GiaoDienDoiMatKhau_SinhVien(int x, int y, int h, int w, student& student1)
 			return false;
 		}
 	}
-	char newpassword[30]; int i = 0;
+	char newpassword[27]; int i = 0;
 	gotoxy(x + 1, y + 8);
 	while (true)
 	{
@@ -267,7 +208,7 @@ bool GiaoDienDoiMatKhau_SinhVien(int x, int y, int h, int w, student& student1)
 			return false;
 		}
 	}
-	char checkpassword[30]; int k = 0;
+	char checkpassword[27]; int k = 0;
 	gotoxy(x + 1, y + 12);
 	while (true)
 	{
@@ -292,6 +233,7 @@ bool GiaoDienDoiMatKhau_SinhVien(int x, int y, int h, int w, student& student1)
 				if (temp == d)
 				{
 					student1.changepassword(d);
+					student1.savefile("sinhvien//" + student1.getID() + "//" + student1.getID() + ".txt");
 					break;
 				}
 				else
@@ -345,7 +287,7 @@ bool GiaoDienDoiMatKhau_GiaoVu(int x, int y, int h, int w, staff& staff1)
 		gotoxy(i, y + 8); cout << " ";
 		gotoxy(i, y + 12); cout << " ";
 	}
-	char currentpassword[30]; int j = 0;
+	char currentpassword[27]; int j = 0;
 	gotoxy(x + 1, y + 4);
 	while (true)
 	{
@@ -394,7 +336,7 @@ bool GiaoDienDoiMatKhau_GiaoVu(int x, int y, int h, int w, staff& staff1)
 			return false;
 		}
 	}
-	char newpassword[30]; int i = 0;
+	char newpassword[27]; int i = 0;
 	gotoxy(x + 1, y + 8);
 	while (true)
 	{
@@ -435,7 +377,7 @@ bool GiaoDienDoiMatKhau_GiaoVu(int x, int y, int h, int w, staff& staff1)
 			return false;
 		}
 	}
-	char checkpassword[30]; int k = 0;
+	char checkpassword[27]; int k = 0;
 	gotoxy(x + 1, y + 12);
 	while (true)
 	{
@@ -460,6 +402,7 @@ bool GiaoDienDoiMatKhau_GiaoVu(int x, int y, int h, int w, staff& staff1)
 				if (temp == d)
 				{
 					staff1.changepassword(d);
+					staff1.savefile("giaovu//GV" + staff1.getID() + ".txt");
 					break;
 				}
 				else
@@ -521,11 +464,8 @@ bool Login2(int x, int y, int h, int w, bool check, string& path)
 	}
 	gotoxy(x + 6, y + 10); cout << "ENTER to login";
 	gotoxy(x + 6, y + 11); cout << "ESC to go back";
-	/*Setcolor(0, 7);
-	gotoxy(x + 1, y + 7); cout << "Password: ";
-	Setcolor(7, 0);*/
-	char s[30]; int j = 0;
-	char a[30]; int i = 0;
+	char s[27]; int j = 0;
+	char a[27]; int i = 0;
 	do
 	{
 		gotoxy(x + 1, y + 4);
@@ -632,35 +572,20 @@ bool Login2(int x, int y, int h, int w, bool check, string& path)
 		}
 	} while (checkdone == false);
 	Setcolor(0, 7);
-	/*string d = s;
-	d = "sinhvien//" + d + ".txt";
-	ifstream filein;
-	filein.open(d, ios::in);
-	gotoxy(0, y + h + 2);
-	if (filein.fail())
-	{
-		gotoxy(x + 2, y + 1);
-		cout << "Sai tai khoan hoac mat khau.";
-	}
-	else
-	{
-		filein >> s;
-		cout << s;
-	}*/
 	return true;
 }
-void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path, semester& currentsemester, const date& currentday)
+void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string &path, semester& currentsemester, const date& currentday)
 {
 	student a;
 	a.input_file(path);
-	bool checkchange = false;
+	a.InputRegCoursetoList_file(currentsemester);
 	while (true)
 	{
-		if (currentsemester.name != "0" && currentsemester.SchoolYear != "0")
+		if (currentsemester.name != "0")
 		{
 			gotoxy(55, 1); cout << currentsemester.SchoolYear;
 			gotoxy(49, 2); cout << currentsemester.name << " (" << currentsemester.start.day << "/" << currentsemester.start.month << "-" << currentsemester.end.day << "/" << currentsemester.end.month << ")";
-			if (currentday.day == 1 && (currentday.month == 9 || currentday.month == 1 || currentday.month == 5))
+			if (currentsemester.checkEndSemester == true)
 			{
 				cout << " END";
 			}
@@ -704,18 +629,14 @@ void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path, s
 			}
 			else if (c == 13)
 			{
+				system("cls");
 				if (ythanhsang == y + 5 * (h + 1) + 1)
 				{
 					system("cls");
-					if (checkchange)
-					{
-						a.savefile("sinhvien\\" + a.getID() + "\\" + a.getID() + ".txt");
-					}
 					break;
 				}
 				else if (ythanhsang == y + 1)
 				{
-					system("cls");
 					while (true)
 					{
 						if (_kbhit())
@@ -726,42 +647,30 @@ void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path, s
 						}
 						a.output();
 					}
-					system("cls");
 
 				}
 				else if (ythanhsang == y + h + 2)
 				{
-					system("cls");
-					if (GiaoDienDoiMatKhau_SinhVien(35, 5, 15, 50, a))
-					{
-						checkchange = true;
-					};
-					system("cls");
+					GiaoDienDoiMatKhau_SinhVien(35, 5, 15, 50, a);
 				}
 				else if (ythanhsang == y + 2 * (h + 1) + 1)
 				{
-					system("cls");
 					cout << "Class : " << a.getclass() << endl << endl;
 					a.View_Class(a.getclass());
 					cout << endl;
 					cout << "ENTER TO GO BACK MENU" << endl;
 					system("pause");
-					system("cls");
 				}
 				else if (ythanhsang == y + 3*(h + 1) +1)
 				{
-					system("cls");
-					if (currentsemester.CheckEndReg == false)
-					{
-						currentsemester.BangDanhSachCourse();
-					}
-					else
-					{
-						cout << "It doesn't begin or the registration ended." << endl;
-					}
-					system("pause");
-					system("cls");
+					a.register_course(currentsemester);
 				}
+				else if (ythanhsang == y + 4 * (h + 1) + 1)
+				{
+					a.View_Score(currentsemester);
+					system("pause");
+				}
+				system("cls");
 			}
 		}
 		ShowCur(0);
@@ -769,23 +678,22 @@ void GiaoDienSinhVien(int x, int y, int h, int w, int ythanhsang, string path, s
 	}
 
 }
-void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path, semester& currentsemester, date& currentday)
+void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string &path, semester& currentsemester, date& currentday)
 {
 	staff b;
 	b.input_file(path);
-	bool checkchange = false;
-	YearCreated* head = NULL;
+	Something* headYear = NULL;
 	if (is_emptyy("schoolyear.txt") == false)
 	{
-		PushAllCreatedYear_File(head);
+		PushAllCreatedYear_File(headYear);
 	}
 	while (true)
 	{
-		if (currentsemester.name != "0" && currentsemester.SchoolYear != "0")
+		if (currentsemester.name != "0")
 		{
 			gotoxy(55, 1); cout << currentsemester.SchoolYear;
 			gotoxy(50, 3); cout << currentsemester.name << " (" << currentsemester.start.day << "/" << currentsemester.start.month << "-" << currentsemester.end.day << "/" << currentsemester.end.month << ")";
-			if (currentday.day == 1 && (currentday.month == 9 || currentday.month == 1 || currentday.month == 5))
+			if (currentsemester.checkEndSemester == true)
 			{
 				cout << " END";
 			}
@@ -797,7 +705,7 @@ void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path, sem
 				c = _getch();
 				if (c == 80)
 				{
-					if (ythanhsang == y + 7 * (h + 1) + 1)
+					if (ythanhsang == y + 8 * (h + 1) + 1)
 					{
 						ythanhsang = y + 1;
 					}
@@ -810,7 +718,7 @@ void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path, sem
 				{
 					if (ythanhsang == y + 1)
 					{
-						ythanhsang = y + 7 * (h + 1) + 1;
+						ythanhsang = y + 8 * (h + 1) + 1;
 					}
 					else
 					{
@@ -820,19 +728,15 @@ void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path, sem
 			}
 			else if (c == 13)
 			{
-				if (ythanhsang == y + 7 * (h + 1) + 1)
+				system("cls");
+				if (ythanhsang == y + 8 * (h + 1) + 1)
 				{
 					system("cls");
-					if (checkchange)
-					{
-						b.savefile("giaovu\\GV" + b.getID() + ".txt");
-					}
-					DeleteListCreatedYear(head);
+					DeleteListCreatedYear(headYear);
 					break;
 				}
 				else if (ythanhsang == y + 1)
 				{
-					system("cls");
 					while (true)
 					{
 						if (_kbhit())
@@ -843,58 +747,44 @@ void GiaoDienGiaoVu(int x, int y, int h, int w, int ythanhsang, string path, sem
 						}
 						b.output();
 					}
-					system("cls");
 				}
 				else if (ythanhsang == y + h + 2)
 				{
-					system("cls");
-					if (GiaoDienDoiMatKhau_GiaoVu(35, 5, 15, 50, b))
-					{
-						checkchange = true;
-					};
-					system("cls");
+					GiaoDienDoiMatKhau_GiaoVu(35, 5, 15, 50, b);
 				}
 				else if (ythanhsang == y + 2 * (h + 1) + 1)
 				{
-					system("cls");
 					ShowCur(1);
-					b.create_schoolyear(head, currentday);
-					system("cls");
+					b.create_schoolyear(headYear, currentday);
 				}
 				else if (ythanhsang == y + 3 * (h + 1) + 1)
 				{
-					system("cls");
 					ShowCur(1);
-					b.create_class(head);
-					system("cls");
+					b.create_class(headYear);
 				}
 				else if (ythanhsang == y + 4 * (h + 1) + 1)
 				{
-					system("cls");
 					b.create_semester(currentsemester, currentday);
-					system("cls");
 				}
 				else if (ythanhsang == y + 5 * (h + 1) + 1)
 				{
-					system("cls");
-					semester *tem = &currentsemester;
-					b.create_course(tem);
-					system("cls");
+					b.create_course(currentsemester);
 				}
 				else if (ythanhsang == y + 6 * (h + 1) + 1)
 				{
-					system("cls");
 					ShowCur(1);
 					b.add_student();
-					system("cls");
 				}
+				else if (ythanhsang == y + 7 * (h + 1) + 1)
+				{
+					b.Score(currentsemester);
+				}
+				system("cls");
 			}
 		}
 		ShowCur(0);
 		Menu_GiaoVu(x, y, h, w, ythanhsang);
 	}
-
-
 }
 //Hàm thao tác tất cả
 void Menu_n_Board(int n, int x, int y, int h, int w)
@@ -906,23 +796,24 @@ void Menu_n_Board(int n, int x, int y, int h, int w)
 	semester currentsemester;
 	date currentday;
 	currentsemester.filein_Cur(currentday);
-	currentsemester.CheckEndReg = checkendreg(currentsemester.StartRegCourse, currentsemester.EndRegCourse, currentday);
+	currentsemester.checkendreg(currentday);
+	currentsemester.checkendsemester(currentday);
 	while (true)
 	{
 		//begin : day se la noi hien thi ra thanh sang cua menu sinhvien, giaovu (luu y day la hien thi chứ chưa cử động nha)
 		if (ythanhsang == y + 1) // lúc này thanh sáng ở vị trí sinhvien, cập nhật check = true
 		{
 			Setcolor(7, 0);
-			gotoxy(x + 1, y + 1); cout << "STUDENT";
+			gotoxy(x + 6, y + 1); cout << "STUDENT";
 			Setcolor(0, 7);
-			gotoxy(x + 1, y + 3); cout << "STAFF";
+			gotoxy(x + 6, y + 3); cout << "STAFF";
 			check = true;
 		}
 		else if (ythanhsang == y + 3)//lúc này thanh sáng ở vị trí giáo vụ, cập nhật check = false
 		{
-			gotoxy(x + 1, y + 1); cout << "STUDENT";
+			gotoxy(x + 6, y + 1); cout << "STUDENT";
 			Setcolor(7, 0);
-			gotoxy(x + 1, y + 3); cout << "STAFF";
+			gotoxy(x + 6, y + 3); cout << "STAFF";
 			Setcolor(0, 7);
 			check = false;
 		}
