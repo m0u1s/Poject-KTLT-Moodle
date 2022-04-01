@@ -2,4 +2,4 @@
 22114562,do thanh trung,nam,23/06/2004
 22118974,tran van quyet,nam,24/05/2004
 22117865,nguyen thi nhu,nu,13/02/2004
-22116732,nguyen thi thao,24/07/2004
+22116732,nguyen thi thao,nu,24/07/2004
