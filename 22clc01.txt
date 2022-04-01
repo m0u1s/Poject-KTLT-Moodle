@@ -1,0 +1,5 @@
+22117561,do thuy kieu,nu,12/06/2004
+22114523,nguyen van nguyen,23/04/2004
+22113242,tran van chien,24/06/2004
+22114564,nguyen chien thang,04/02/2004
+22113354,nguyen thien tung,03/05/2004

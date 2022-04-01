@@ -1,0 +1,5 @@
+22114453,tran thi nhung,nu,20/01/2004
+22112314,tran bach chien,nam,04/04/2004
+22113212,nguyen bach thang,nam,05/06/2004
+22117854,do van quyet,nam,02/03/2004
+22116751,trinh van thang,nam,05/01/2004
