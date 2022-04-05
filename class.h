@@ -9,19 +9,24 @@
 #include <cassert> 
 #include <iomanip>
 using namespace std;
-//struct
 struct Something
 {
 	string a;
 	Something* pnext;
 	Something* prev;
 };
+struct YearCreated {
+	string year;
+	YearCreated* pnext;
+	YearCreated* ppre;
+};
 struct date
 {
 	short day, month;
 };
-struct tempStudent
+class tempStudent
 {
+public:
 	string name;
 	string ID;
 	string Class;
@@ -53,7 +58,6 @@ public:
 	float final_grade;
 	Course_Result* pnext1 = NULL;
 };
-//class
 class semester {
 public:
 	string SchoolYear = "0";
@@ -98,6 +102,7 @@ public:
 	void input_file(string path);
 	void input();
 	void output();
+	void View_Class(string classname);
 };
 class student : public person {
 private:
@@ -106,43 +111,35 @@ public:
 	int NumCourse = 0;
 	Course_Result* RegistedCoursee = NULL;
 	bool CheckCourse(string CourseID, semester& a);
-	void InputRegCoursetoList_file(semester &a);
+	void InputRegCoursetoList_file(semester& a);
 	void savefile(string path);
 	string getclass();
 	void input();
 	void input_file(string path);
 	void output();
-	void View_Class(string classname);
-	void register_course(semester &a);
-	void courses_infomation(fstream course_registered);
-	void delete_course(string& CourseID,semester &a);
-	void view_registered_course(semester &a);
+	void register_course(semester& a);
+	void delete_course(string& CourseID, semester& a);
+	void view_registered_course(semester& a);
 	void view_notregistered_course(semester& a);
-	void InsertRegCoursetoList(string &CourseID, semester& a);
-	void View_Score(semester &a);
-	void view_course_member(fstream course_registered);
+	void InsertRegCoursetoList(string& CourseID, semester& a);
+	void View_Score(semester& a);
+	void Edit_Profile();
 	~student();
-
-private:
-	void view_results(fstream result_list); // b/c 1 student only see his/her results other can't
 };
 class staff : public person {
 public:
 	void savefile(string path);
-	void create_schoolyear(Something*& headYear, const date& currentday);
+	void create_schoolyear(YearCreated*& headYear, const date& currentday);
 	void add_student();
-	void View_Class(string classname);
-	void create_class(Something*& head);
-	void create_course(semester & a);
+	void create_class(YearCreated*& head);
+	void create_course(semester& a);
 	void create_semester(semester& currentsemester, date& currentday);
 	void adjust_Courses(semester& a);
 	void delete_course(semester& a);
-	void Score(semester &a);
-	void create_FileScoreboard(semester &a);
-	void view_ScoreCourse(string &CourseID, semester& a);
+	void Score(semester& a, const date& currentday);
+	void create_FileScoreboard(semester& a);
+	void view_ScoreCourse(semester& a);
 	void update_ScoreStudent(semester& a);
-	void read_studentList();
-	void output_Course_Student();
-	void adjust_StudentGrades();
-	void read_ClassGrades();
+	void view_ScoreClass(semester& a);
+	void Edit_Profile();
 };
